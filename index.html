@@ -167,6 +167,16 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
 .btn-copiar:hover{border-color:var(--text);color:var(--text);}
 .btn-copiar.copiado{background:var(--found);color:#111;border-color:var(--found);}
 
+/* Campo corrección de nombre */
+.fix-section{width:100%;border-top:1px solid var(--border);padding-top:0.6rem;display:none;flex-direction:column;gap:0.3rem;}
+.fix-section.visible{display:flex;}
+.fix-label{font-size:0.6rem;font-weight:800;color:var(--muted);}
+.fix-row{display:flex;gap:0.3rem;}
+.fix-input{flex:1;padding:0.32rem 0.45rem;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:700;outline:none;}
+.fix-input:focus{border-color:#7986cb;}
+.fix-btn{padding:0.32rem 0.6rem;border-radius:7px;border:none;background:#7986cb;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.65rem;cursor:pointer;white-space:nowrap;}
+.fix-btn:hover{opacity:0.85;}
+
 /* BOTÓN VOLVER ARRIBA */
 #back-top{position:fixed;bottom:1.2rem;right:1rem;width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid rgba(255,255,255,0.18);color:var(--text);font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.5);transition:all 0.2s;}
 #back-top.visible{display:flex;}
@@ -320,6 +330,13 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
       <button class="btn-agregar" id="popup-btn-agregar" onclick="agregarDesdePopup()">🔥 Agregar a Más Buscados</button>
       <button class="btn-encontrado" id="popup-btn-encontrado" onclick="toggleFoundDesdePopup()">✓ Marcar como encontrado</button>
       <button class="btn-copiar" id="popup-btn-copiar" onclick="copiarDesdePopup()">📋 Copiar nombre</button>
+      <div class="fix-section" id="fix-section">
+        <div class="fix-label">✏️ Corregir nombre (busca imagen automáticamente)</div>
+        <div class="fix-row">
+          <input class="fix-input" id="fix-input" type="text" placeholder="Nombre correcto..." autocomplete="off">
+          <button class="fix-btn" onclick="corregirNombre()">✓</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -558,6 +575,17 @@ function abrirPopup(p){
   name.textContent=p.name;
   tags.innerHTML=p.tags.map(t=>`<span class="popup-tag" style="color:${tagColor(t)};border-color:${tagColor(t)}55">${t}</span>`).join('');
 
+  // Mostrar campo corrección solo si no tiene imagen
+  const fixSection=document.getElementById('fix-section');
+  const fixInput=document.getElementById('fix-input');
+  if(!p.pokeId){
+    fixSection.classList.add('visible');
+    fixInput.value=p.name;
+  } else {
+    fixSection.classList.remove('visible');
+    fixInput.value='';
+  }
+
   // Estado más buscados
   const yaEnBuscados=buscados.includes(p.name);
   btnAgregar.textContent=yaEnBuscados?'✓ Ya está en Más Buscados':'🔥 Agregar a Más Buscados';
@@ -595,6 +623,54 @@ function toggleFoundDesdePopup(){
   if(!popupPoke)return;
   toggleFound(popupPoke.name);
   actualizarBtnEncontrado();
+}
+
+async function corregirNombre(){
+  if(!popupPoke)return;
+  const input=document.getElementById('fix-input');
+  const nuevoNombre=input.value.trim();
+  if(!nuevoNombre)return;
+  const btn=document.querySelector('.fix-btn');
+  btn.textContent='⏳';btn.disabled=true;
+
+  // Buscar en lista base primero
+  let data=buscarPoke(nuevoNombre);
+  let pokeId=data?data.pokeId:null;
+  let energias=data?data.energias:popupPoke.energias;
+  let tags=data?data.tags:popupPoke.tags;
+
+  // Si no está en base, consultar PokeAPI
+  if(!pokeId) pokeId=await fetchPokeId(nuevoNombre);
+
+  // Actualizar en listaActual
+  const idx=listaActual.findIndex(p=>p.name===popupPoke.name);
+  if(idx>=0){
+    listaActual[idx]={...listaActual[idx],name:nuevoNombre,pokeId,energias,tags};
+    // Migrar found si estaba marcado
+    if(found.has(popupPoke.name)){found.delete(popupPoke.name);found.add(nuevoNombre);saveFound();}
+    saveLista();
+  }
+
+  btn.textContent='✓';btn.disabled=false;
+  input.value='';
+
+  // Actualizar popup con nuevo nombre e imagen
+  popupPoke=listaActual[idx];
+  const img=document.getElementById('popup-img');
+  const fallback=document.getElementById('popup-fallback');
+  document.getElementById('popup-name').textContent=nuevoNombre;
+  document.getElementById('fix-section').classList.remove('visible');
+
+  if(pokeId){
+    img.src=`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/${pokeId}.png`;
+    img.onerror=function(){
+      this.src=`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${pokeId}.png`;
+      this.onerror=function(){this.style.display='none';fallback.style.display='flex';};
+    };
+    img.style.display='block';fallback.style.display='none';
+  }
+
+  render();
 }
 
 function copiarDesdePopup(){
