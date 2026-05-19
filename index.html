@@ -6,118 +6,139 @@
 <title>Buscador de Cartas TCG</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#111318; --surface:#1c1f27; --border:rgba(255,255,255,0.07);
-  --text:#f0f0f0; --muted:#6b7280; --found:#22c55e;
-}
+:root{--bg:#111318;--surface:#1c1f27;--border:rgba(255,255,255,0.07);--text:#f0f0f0;--muted:#6b7280;--found:#22c55e;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;}
 
-/* HEADER */
-header{padding:1.1rem 1rem 0.7rem;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0d0f14 0%,var(--bg) 100%);}
-header h1{font-family:'Press Start 2P',monospace;font-size:clamp(0.42rem,1.8vw,0.78rem);color:#f5c842;text-shadow:0 0 20px rgba(245,200,66,0.4);letter-spacing:2px;margin-bottom:0.3rem;}
-header p{color:var(--muted);font-size:0.7rem;font-weight:700;}
+header{padding:1rem 1rem 0.6rem;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0d0f14 0%,var(--bg) 100%);}
+header h1{font-family:'Press Start 2P',monospace;font-size:clamp(0.4rem,1.8vw,0.78rem);color:#f5c842;text-shadow:0 0 20px rgba(245,200,66,0.4);letter-spacing:2px;margin-bottom:0.3rem;}
+header p{color:var(--muted);font-size:0.68rem;font-weight:700;}
 
-/* FILTROS */
-.filters{display:flex;flex-wrap:wrap;gap:0.38rem;justify-content:center;padding:0.6rem 0.7rem 0.5rem;position:sticky;top:0;z-index:100;background:rgba(17,19,24,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
-.filter-btn{display:flex;align-items:center;gap:0.25rem;padding:0.3rem 0.58rem;border-radius:999px;border:2px solid rgba(255,255,255,0.08);font-family:'Nunito',sans-serif;font-weight:900;font-size:0.6rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px;transition:all 0.15s;background:rgba(255,255,255,0.04);color:var(--text);}
+.filters{display:flex;flex-wrap:wrap;gap:0.35rem;justify-content:center;padding:0.55rem 0.6rem 0.45rem;position:sticky;top:0;z-index:100;background:rgba(17,19,24,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+.filter-btn{display:flex;align-items:center;gap:0.22rem;padding:0.28rem 0.55rem;border-radius:999px;border:2px solid rgba(255,255,255,0.08);font-family:'Nunito',sans-serif;font-weight:900;font-size:0.58rem;cursor:pointer;text-transform:uppercase;transition:all 0.15s;background:rgba(255,255,255,0.04);color:var(--text);}
 .filter-btn:hover{transform:translateY(-2px);border-color:var(--clr);}
 .filter-btn.active{background:var(--clr);color:#111;border-color:var(--clr);box-shadow:0 0 10px var(--clr);}
-.eico{width:14px;height:14px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.58rem;background:var(--clr);color:#111;flex-shrink:0;}
+.eico{width:13px;height:13px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.55rem;background:var(--clr);color:#111;flex-shrink:0;}
 .filter-btn.active .eico{background:rgba(0,0,0,0.15);}
 
-/* LAYOUT */
+/* ── LAYOUT PC ─────────────────────── */
 .layout{display:flex;max-width:1440px;margin:0 auto;}
 
-/* SIDEBAR */
-.sidebar{width:175px;flex-shrink:0;position:sticky;top:76px;height:calc(100vh - 76px);overflow-y:auto;border-right:1px solid var(--border);padding:0.65rem 0.5rem 2rem;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent;}
+/* SIDEBAR PC — columna fija izquierda */
+.sidebar{width:170px;flex-shrink:0;position:sticky;top:72px;height:calc(100vh - 72px);overflow-y:auto;border-right:1px solid var(--border);padding:0.6rem 0.5rem 2rem;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent;}
 .sidebar::-webkit-scrollbar{width:3px;}
 .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px;}
-.sb-title{font-family:'Press Start 2P',monospace;font-size:0.36rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.4rem;padding-bottom:0.3rem;border-bottom:1px solid var(--border);}
-.sb-stats{font-size:0.62rem;font-weight:800;margin-bottom:0.5rem;}
-.sb-list{display:flex;flex-direction:column;gap:0.1rem;}
-.s-item{display:flex;align-items:center;gap:0.28rem;padding:0.2rem 0.3rem;border-radius:5px;cursor:pointer;transition:background 0.12s;background:transparent;border:none;color:var(--text);text-align:left;width:100%;}
+.sb-title{font-family:'Press Start 2P',monospace;font-size:0.34rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.35rem;padding-bottom:0.28rem;border-bottom:1px solid var(--border);}
+.sb-stats{font-size:0.6rem;font-weight:800;margin-bottom:0.42rem;}
+.sb-list{display:flex;flex-direction:column;gap:0.08rem;}
+.s-item{display:flex;align-items:center;gap:0.25rem;padding:0.18rem 0.28rem;border-radius:5px;cursor:pointer;transition:background 0.12s;background:transparent;border:none;color:var(--text);text-align:left;width:100%;}
 .s-item:hover{background:rgba(255,255,255,0.05);}
 .s-item.sf{color:var(--found);}
-.s-chk{width:11px;height:11px;border-radius:3px;border:1.5px solid var(--muted);display:inline-flex;align-items:center;justify-content:center;font-size:0.48rem;flex-shrink:0;color:transparent;transition:all 0.12s;}
+.s-chk{width:10px;height:10px;border-radius:3px;border:1.5px solid var(--muted);display:inline-flex;align-items:center;justify-content:center;font-size:0.45rem;flex-shrink:0;color:transparent;transition:all 0.12s;}
 .s-item.sf .s-chk{background:var(--found);border-color:var(--found);color:#111;}
-.s-nm{font-size:0.6rem;font-weight:700;line-height:1.1;}
+.s-nm{font-size:0.58rem;font-weight:700;line-height:1.1;}
 
 /* MAIN */
-.main{flex:1;padding:1rem 0.85rem 5rem;min-width:0;}
+.main{flex:1;padding:1rem 0.8rem 5rem;min-width:0;}
 
-/* LISTA ALFABÉTICA TODOS — 3 columnas */
+/* LISTA ALFABÉTICA */
 .alpha-section{margin-bottom:1.8rem;}
-.alpha-title{font-family:'Press Start 2P',monospace;font-size:0.5rem;color:#f5c842;margin-bottom:0.7rem;letter-spacing:1px;}
-.alpha-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.25rem 0.5rem;margin-bottom:1.5rem;}
-.a-item{display:flex;align-items:center;gap:0.25rem;padding:0.2rem 0.3rem;border-radius:5px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:0.62rem;font-weight:700;color:var(--text);transition:background 0.12s;white-space:nowrap;overflow:hidden;}
+.alpha-title{font-family:'Press Start 2P',monospace;font-size:0.48rem;color:#f5c842;margin-bottom:0.65rem;letter-spacing:1px;}
+.alpha-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.22rem 0.45rem;margin-bottom:1.4rem;}
+.a-item{display:flex;align-items:center;gap:0.22rem;padding:0.18rem 0.28rem;border-radius:5px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:0.6rem;font-weight:700;color:var(--text);transition:background 0.12s;overflow:hidden;}
 .a-item:hover{background:rgba(255,255,255,0.07);}
 .a-item.af{color:var(--found);border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);}
-.a-chk{width:11px;height:11px;border-radius:3px;border:1.5px solid var(--muted);display:inline-flex;align-items:center;justify-content:center;font-size:0.46rem;color:transparent;flex-shrink:0;transition:all 0.12s;}
+.a-chk{width:10px;height:10px;border-radius:3px;border:1.5px solid var(--muted);display:inline-flex;align-items:center;justify-content:center;font-size:0.44rem;color:transparent;flex-shrink:0;transition:all 0.12s;}
 .a-item.af .a-chk{background:var(--found);border-color:var(--found);color:#111;}
-.alpha-divider{border:none;border-top:1px solid var(--border);margin:1rem 0 1.5rem;}
+.alpha-divider{border:none;border-top:1px solid var(--border);margin:0.8rem 0 1.4rem;}
 
 /* SECCIONES */
 .type-section{margin-bottom:2rem;animation:fadeUp 0.3s ease both;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.sec-header{display:flex;align-items:center;gap:0.55rem;margin-bottom:0.7rem;padding-bottom:0.45rem;border-bottom:2px solid var(--clr);}
-.big-ico{width:27px;height:27px;border-radius:50%;background:var(--clr);display:flex;align-items:center;justify-content:center;font-size:0.82rem;flex-shrink:0;box-shadow:0 0 10px var(--clr);}
-.sec-header h2{font-family:'Press Start 2P',monospace;font-size:0.52rem;color:var(--clr);letter-spacing:1px;}
-.sec-header .sub{font-size:0.53rem;color:var(--muted);font-weight:700;}
-.cnt{margin-left:auto;font-family:'Press Start 2P',monospace;font-size:0.4rem;color:var(--muted);background:rgba(255,255,255,0.04);padding:0.18rem 0.35rem;border-radius:5px;}
+.sec-header{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.65rem;padding-bottom:0.42rem;border-bottom:2px solid var(--clr);}
+.big-ico{width:26px;height:26px;border-radius:50%;background:var(--clr);display:flex;align-items:center;justify-content:center;font-size:0.78rem;flex-shrink:0;box-shadow:0 0 10px var(--clr);}
+.sec-header h2{font-family:'Press Start 2P',monospace;font-size:0.5rem;color:var(--clr);letter-spacing:1px;}
+.sec-header .sub{font-size:0.52rem;color:var(--muted);font-weight:700;}
+.cnt{margin-left:auto;font-family:'Press Start 2P',monospace;font-size:0.38rem;color:var(--muted);background:rgba(255,255,255,0.04);padding:0.16rem 0.32rem;border-radius:5px;}
 
-/* GRID CARTAS */
-.poke-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:0.5rem;}
+.poke-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:0.48rem;}
 
-/* CARTA */
-.poke-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--border);padding:0.52rem 0.35rem 0.42rem;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s,border-color 0.15s;}
+.poke-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--border);padding:0.5rem 0.32rem 0.4rem;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s,border-color 0.15s;}
 .poke-card.fc{border-color:var(--found)!important;background:#0a1a0f;}
 .poke-card.fc::before{content:'';position:absolute;inset:0;background:rgba(34,197,94,0.05);pointer-events:none;}
-
-/* botón check */
-.chk-btn{position:absolute;top:5px;right:5px;width:19px;height:19px;border-radius:50%;border:1.5px solid var(--muted);background:rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.6rem;transition:all 0.15s;z-index:3;color:transparent;}
+.chk-btn{position:absolute;top:5px;right:5px;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);background:rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.58rem;transition:all 0.15s;z-index:3;color:transparent;}
 .chk-btn:hover{border-color:var(--found);color:var(--found);background:rgba(34,197,94,0.12);}
 .poke-card.fc .chk-btn{border-color:var(--found);background:var(--found);color:#111;}
-
-/* link */
 .poke-link{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;width:100%;}
-.img-wrap{width:66px;height:66px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.32rem;}
-.img-wrap img{width:66px;height:66px;object-fit:contain;transition:transform 0.15s;}
+.img-wrap{width:64px;height:64px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.3rem;}
+.img-wrap img{width:64px;height:64px;object-fit:contain;transition:transform 0.15s;}
 .poke-link:hover .img-wrap img{transform:scale(1.1);}
-.fallback{width:66px;height:66px;background:rgba(255,255,255,0.05);border-radius:8px;display:none;align-items:center;justify-content:center;font-size:1.6rem;}
-.poke-name{font-weight:900;font-size:0.6rem;line-height:1.2;margin-bottom:0.25rem;}
+.fallback{width:64px;height:64px;background:rgba(255,255,255,0.05);border-radius:8px;display:none;align-items:center;justify-content:center;font-size:1.5rem;}
+.poke-name{font-weight:900;font-size:0.58rem;line-height:1.2;margin-bottom:0.22rem;}
 .poke-card.fc .poke-name{color:var(--found);}
 .poke-tags{display:flex;flex-wrap:wrap;gap:0.1rem;justify-content:center;}
-.poke-tag{font-size:0.42rem;font-weight:900;padding:0.08rem 0.24rem;border-radius:4px;text-transform:uppercase;border:1px solid;opacity:0.85;}
-.found-bar{position:absolute;bottom:0;left:0;right:0;background:var(--found);color:#111;font-size:0.42rem;font-weight:900;text-transform:uppercase;letter-spacing:0.3px;padding:0.12rem;text-align:center;display:none;}
+.poke-tag{font-size:0.4rem;font-weight:900;padding:0.07rem 0.22rem;border-radius:4px;text-transform:uppercase;border:1px solid;opacity:0.85;}
+.found-bar{position:absolute;bottom:0;left:0;right:0;background:var(--found);color:#111;font-size:0.4rem;font-weight:900;text-transform:uppercase;padding:0.11rem;text-align:center;display:none;}
 .poke-card.fc .found-bar{display:block;}
 
-/* BOTÓN VOLVER ARRIBA */
-#back-top{position:fixed;bottom:1.2rem;right:1rem;width:42px;height:42px;border-radius:50%;background:var(--surface);border:2px solid rgba(255,255,255,0.15);color:var(--text);font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:all 0.2s;}
+/* ── BOTÓN VOLVER ARRIBA ───────────── */
+#back-top{position:fixed;bottom:1.2rem;right:2rem;width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid rgba(255,255,255,0.18);color:var(--text);font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.5);transition:all 0.2s;}
 #back-top.visible{display:flex;}
 #back-top:hover{background:#f5c842;color:#111;border-color:#f5c842;}
 
-/* ÍNDICE A-Z (solo en vista TODOS) */
-#az-bar{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:150;display:none;flex-direction:column;gap:1px;background:rgba(17,19,24,0.9);border-left:1px solid var(--border);border-radius:8px 0 0 8px;padding:4px 2px;}
+/* ── ÍNDICE A-Z PC — borde derecho ─── */
+#az-bar{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:150;display:none;flex-direction:column;gap:1px;background:rgba(17,19,24,0.92);border-left:1px solid var(--border);border-radius:8px 0 0 8px;padding:3px 2px;}
 #az-bar.visible{display:flex;}
-.az-btn{width:20px;height:18px;display:flex;align-items:center;justify-content:center;font-size:0.52rem;font-weight:900;color:var(--muted);cursor:pointer;border-radius:3px;transition:all 0.12s;background:transparent;border:none;}
-.az-btn:hover{background:#f5c842;color:#111;}
+.az-btn{width:20px;height:17px;display:flex;align-items:center;justify-content:center;font-size:0.5rem;font-weight:900;color:var(--muted);cursor:pointer;border-radius:3px;transition:all 0.12s;background:transparent;border:none;}
 .az-btn.has{color:var(--text);}
+.az-btn.has:hover{background:#f5c842;color:#111;}
+.az-btn:disabled{opacity:0.2;cursor:default;}
 
 .empty{text-align:center;color:var(--muted);padding:3rem;font-size:0.8rem;}
 
-@media(max-width:640px){
-  .sidebar{width:140px;}
-  .s-nm{font-size:0.55rem;}
+/* ── RESPONSIVE TABLET ─────────────── */
+@media(max-width:768px){
+  .sidebar{width:145px;}
+  .s-nm{font-size:0.54rem;}
   .alpha-grid{grid-template-columns:repeat(2,1fr);}
+  #az-bar .az-btn{width:18px;height:15px;font-size:0.44rem;}
 }
-@media(max-width:480px){
+
+/* ── RESPONSIVE MÓVIL ──────────────── */
+@media(max-width:520px){
+  /* Sidebar pasa a banda horizontal fija arriba */
   .layout{flex-direction:column;}
-  .sidebar{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border);max-height:130px;padding:0.45rem;}
-  .sb-list{flex-direction:row;flex-wrap:wrap;gap:0.18rem;}
-  .s-item{width:auto;padding:0.15rem 0.35rem;}
+  .sidebar{
+    width:100%;
+    height:auto;
+    max-height:140px;
+    position:sticky;
+    top:68px;       /* debajo de los filtros */
+    z-index:90;
+    border-right:none;
+    border-bottom:1px solid var(--border);
+    padding:0.45rem 0.6rem 0.5rem;
+    background:rgba(17,19,24,0.97);
+    backdrop-filter:blur(8px);
+  }
+  .sb-title{display:inline;margin-right:0.3rem;border-bottom:none;padding-bottom:0;font-size:0.32rem;}
+  .sb-stats{display:inline;font-size:0.6rem;}
+  /* Lista en fila de píldoras */
+  .sb-list{flex-direction:row;flex-wrap:wrap;gap:0.2rem;margin-top:0.3rem;}
+  .s-item{width:auto;padding:0.12rem 0.38rem;background:rgba(255,255,255,0.04);border-radius:999px;border:1px solid var(--border);}
+  .s-item.sf{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.35);}
   .s-chk{display:none;}
+  .s-nm{font-size:0.6rem;}
+
+  /* A-Z oculto en móvil (se navega con el sidebar de arriba) */
   #az-bar{display:none!important;}
+
+  /* Botón volver arriba */
+  #back-top{right:0.7rem;bottom:0.9rem;width:36px;height:36px;font-size:1rem;}
+
+  .alpha-grid{grid-template-columns:repeat(2,1fr);}
+  .poke-grid{grid-template-columns:repeat(auto-fill,minmax(85px,1fr));}
+  .main{padding:0.8rem 0.5rem 5rem;}
 }
 </style>
 </head>
@@ -125,7 +146,7 @@ header p{color:var(--muted);font-size:0.7rem;font-weight:700;}
 
 <header>
   <h1>⚡ Buscador de Cartas TCG</h1>
-  <p>✓ marcar encontrado &nbsp;·&nbsp; tocar imagen → ver cartas en TCGPlayer</p>
+  <p>✓ marcar encontrado &nbsp;·&nbsp; tocar imagen → PokémonTCG.io</p>
 </header>
 
 <div class="filters" id="filters"></div>
@@ -139,39 +160,19 @@ header p{color:var(--muted);font-size:0.7rem;font-weight:700;}
   <div class="main" id="main"></div>
 </div>
 
-<!-- Botón volver arriba -->
 <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Volver arriba">↑</button>
-
-<!-- Índice A-Z lateral -->
 <div id="az-bar"></div>
 
 <script>
-// ═══════════════════════════════════════
-// STORAGE
-// ═══════════════════════════════════════
+// ═══ STORAGE ═══════════════════════
 const SK='tcg_found_v1';
-// Pre-cargados desde tu colección
-const PRELOADED=[
-  "Alcremie","Archen","Audino","Blastoise","Cyclizar","Dracozolt",
-  "Drifloon","Ferroseed","Fletchinder","Grafaiai","Grimmsnarl","Inteleon",
-  "Lugia","Polteageist","Primarina","Sobble","Spectrier","Whiscash"
-];
+const PRELOADED=["Alcremie","Archen","Audino","Blastoise","Cyclizar","Dracozolt","Drifloon","Ferroseed","Fletchinder","Grafaiai","Grimmsnarl","Inteleon","Lugia","Polteageist","Primarina","Sobble","Spectrier","Whiscash"];
 let found=new Set();
-try{
-  const s=localStorage.getItem(SK);
-  if(s) found=new Set(JSON.parse(s));
-  else found=new Set(PRELOADED); // primera vez: carga los encontrados
-  saveFound();
-}catch(e){ found=new Set(PRELOADED); }
+try{const s=localStorage.getItem(SK);if(s)found=new Set(JSON.parse(s));else{found=new Set(PRELOADED);saveFound();}}catch(e){found=new Set(PRELOADED);}
 function saveFound(){try{localStorage.setItem(SK,JSON.stringify([...found]));}catch(e){}}
-function toggleFound(name){
-  if(found.has(name))found.delete(name);else found.add(name);
-  saveFound();render();
-}
+function toggleFound(name){if(found.has(name))found.delete(name);else found.add(name);saveFound();render();}
 
-// ═══════════════════════════════════════
-// DATOS
-// ═══════════════════════════════════════
+// ═══ DATOS ═════════════════════════
 const ENERGIAS=[
   {id:"todos",    label:"TODOS",    icon:"★",  color:"#f5c842", nota:""},
   {id:"fuego",    label:"Fuego",    icon:"🔥", color:"#ff6b35", nota:"Tipo: Fuego"},
@@ -187,193 +188,142 @@ const ENERGIAS=[
   {id:"hada",     label:"Hada",     icon:"🧚", color:"#f48fb1", nota:"Tipo: Hada"},
 ];
 
-// energias = lista de IDs de energía TCG donde aparece cada Pokémon
-// Basado en cartas físicas reales (múltiples expansiones)
 const POKEMON=[
-  // A
-  {name:"Alcremie",    pokeId:869, energias:["hada"],                        tags:["Hada"]},
-  {name:"Arceus",      pokeId:493, energias:["incoloro"],                    tags:["Normal"]},
-  {name:"Archen",      pokeId:566, energias:["lucha","incoloro"],            tags:["Roca","Volador"]},
-  {name:"Arctovish",   pokeId:883, energias:["agua"],                        tags:["Agua","Hielo"]},
-  {name:"Audino",      pokeId:531, energias:["incoloro"],                    tags:["Normal"]},
-  {name:"Azumarill",   pokeId:184, energias:["agua","psiquico","hada"],      tags:["Agua","Hada"]},
-  // B
-  {name:"Blacephalon", pokeId:806, energias:["fuego","psiquico"],            tags:["Fuego","Fantasma"]},
-  {name:"Blastoise",   pokeId:9,   energias:["agua"],                        tags:["Agua"]},
-  {name:"Brionne",     pokeId:729, energias:["agua"],                        tags:["Agua"]},
-  {name:"Buzzwole",    pokeId:794, energias:["planta","lucha"],              tags:["Bicho","Lucha"]},
-  // C
-  {name:"Calyrex",     pokeId:898, energias:["psiquico","planta"],           tags:["Psíquico","Planta"]},
-  {name:"Celesteela",  pokeId:797, energias:["metal","incoloro"],            tags:["Acero","Volador"]},
-  {name:"Cyclizar",    pokeId:967, energias:["dragon","incoloro"],           tags:["Dragón","Normal"]},
-  // D
-  {name:"Dracovish",   pokeId:882, energias:["agua","dragon"],               tags:["Agua","Dragón"]},
-  {name:"Dracozolt",   pokeId:880, energias:["rayo","dragon"],               tags:["Eléctrico","Dragón"]},
-  {name:"Dragapult",   pokeId:887, energias:["dragon","psiquico"],           tags:["Dragón","Fantasma"]},
-  {name:"Drifloon",    pokeId:425, energias:["psiquico","incoloro"],         tags:["Fantasma","Volador"]},
-  // F
-  {name:"Ferroseed",   pokeId:597, energias:["planta","metal"],              tags:["Planta","Acero"]},
-  {name:"Fletchinder", pokeId:662, energias:["fuego","incoloro"],            tags:["Fuego","Volador"]},
-  // G
-  {name:"Grafaiai",    pokeId:946, energias:["psiquico","incoloro"],         tags:["Veneno","Normal"]},
-  {name:"Greedent",    pokeId:820, energias:["incoloro"],                    tags:["Normal"]},
-  {name:"Grimmsnarl",  pokeId:861, energias:["oscuro","psiquico","hada"],    tags:["Oscuro","Hada"]},
-  {name:"Guzzlord",    pokeId:799, energias:["oscuro","dragon"],             tags:["Oscuro","Dragón"]},
-  // H
-  {name:"Hatenna",     pokeId:856, energias:["psiquico"],                    tags:["Psíquico"]},
-  // I
-  {name:"Inteleon",    pokeId:818, energias:["agua"],                        tags:["Agua"]},
-  // J
-  {name:"Jellicent",   pokeId:593, energias:["agua","psiquico"],             tags:["Agua","Fantasma"]},
-  {name:"Jigglypuff",  pokeId:39,  energias:["incoloro","hada"],             tags:["Normal","Hada"]},
-  // K
-  {name:"Kartana",     pokeId:798, energias:["planta","metal"],              tags:["Planta","Acero"]},
-  {name:"Kecleon",     pokeId:352, energias:["incoloro"],                    tags:["Normal"]},
-  {name:"Kleavor",     pokeId:900, energias:["planta","lucha"],              tags:["Bicho","Roca"]},
-  {name:"Komala",      pokeId:775, energias:["incoloro"],                    tags:["Normal"]},
-  {name:"Kubfu",       pokeId:891, energias:["lucha"],                       tags:["Lucha"]},
-  // L
-  {name:"Lugia",       pokeId:249, energias:["psiquico","incoloro"],         tags:["Psíquico","Volador"]},
-  {name:"Lunala",      pokeId:792, energias:["psiquico"],                    tags:["Psíquico","Fantasma"]},
-  // M
-  {name:"Mime Jr.",    pokeId:439, energias:["psiquico","hada"],             tags:["Psíquico","Hada"]},
-  {name:"Minior",      pokeId:774, energias:["lucha","incoloro"],            tags:["Roca","Volador"]},
-  {name:"Munchlax",    pokeId:446, energias:["incoloro"],                    tags:["Normal"]},
-  {name:"Murkrow",     pokeId:198, energias:["oscuro","incoloro"],           tags:["Oscuro","Volador"]},
-  // N
-  {name:"Naganadel",   pokeId:804, energias:["psiquico","dragon"],           tags:["Veneno","Dragón"]},
-  {name:"Necrozma",    pokeId:800, energias:["psiquico"],                    tags:["Psíquico"]},
-  {name:"Nihilego",    pokeId:793, energias:["lucha","psiquico"],            tags:["Roca","Veneno"]},
-  // P
-  {name:"Pheromosa",   pokeId:795, energias:["planta","lucha"],              tags:["Bicho","Lucha"]},
-  {name:"Pikipek",     pokeId:731, energias:["incoloro"],                    tags:["Normal","Volador"]},
-  {name:"Poipole",     pokeId:803, energias:["psiquico"],                    tags:["Veneno"]},
-  {name:"Polteageist", pokeId:854, energias:["psiquico"],                    tags:["Fantasma"]},
-  {name:"Popplio",     pokeId:728, energias:["agua"],                        tags:["Agua"]},
-  {name:"Primarina",   pokeId:730, energias:["agua","hada"],                 tags:["Agua","Hada"]},
-  // R
-  {name:"Regidrago",   pokeId:895, energias:["dragon"],                      tags:["Dragón"]},
-  {name:"Regieleki",   pokeId:894, energias:["rayo"],                        tags:["Eléctrico"]},
-  // S
-  {name:"Sirfetch'd",  pokeId:865, energias:["lucha"],                       tags:["Lucha"]},
-  {name:"Skuntank",    pokeId:435, energias:["psiquico","oscuro"],           tags:["Veneno","Oscuro"]},
-  {name:"Sobble",      pokeId:816, energias:["agua"],                        tags:["Agua"]},
-  {name:"Solgaleo",    pokeId:791, energias:["psiquico","metal"],            tags:["Psíquico","Acero"]},
-  {name:"Spectrier",   pokeId:897, energias:["psiquico"],                    tags:["Fantasma"]},
-  {name:"Stakataka",   pokeId:805, energias:["lucha","metal"],               tags:["Roca","Acero"]},
-  {name:"Steenee",     pokeId:762, energias:["planta"],                      tags:["Planta"]},
-  // T
-  {name:"Toxapex",     pokeId:748, energias:["agua"],                        tags:["Veneno","Agua"]},
-  {name:"Toxicroak",   pokeId:454, energias:["lucha","psiquico"],            tags:["Veneno","Lucha"]},
-  {name:"Type: Null",  pokeId:772, energias:["incoloro"],                    tags:["Normal"]},
-  // V
-  {name:"Venusaur",    pokeId:3,   energias:["planta"],                      tags:["Planta","Veneno"]},
-  // W
-  {name:"Whiscash",    pokeId:340, energias:["agua","lucha"],                tags:["Agua","Tierra"]},
-  {name:"Wishiwashi",  pokeId:746, energias:["agua"],                        tags:["Agua"]},
-  {name:"Wyrdeer",     pokeId:899, energias:["incoloro","psiquico"],         tags:["Normal","Psíquico"]},
-  // X
-  {name:"Xurkitree",   pokeId:796, energias:["rayo"],                        tags:["Eléctrico"]},
-  // Z
-  {name:"Zygarde",     pokeId:718, energias:["dragon","lucha"],              tags:["Dragón","Tierra"]},
+  {name:"Alcremie",    pokeId:869, energias:["hada"],                     tags:["Hada"]},
+  {name:"Arceus",      pokeId:493, energias:["incoloro"],                 tags:["Normal"]},
+  {name:"Archen",      pokeId:566, energias:["lucha","incoloro"],         tags:["Roca","Volador"]},
+  {name:"Arctovish",   pokeId:883, energias:["agua"],                     tags:["Agua","Hielo"]},
+  {name:"Audino",      pokeId:531, energias:["incoloro"],                 tags:["Normal"]},
+  {name:"Azumarill",   pokeId:184, energias:["agua","psiquico","hada"],   tags:["Agua","Hada"]},
+  {name:"Blacephalon", pokeId:806, energias:["fuego","psiquico"],         tags:["Fuego","Fantasma"]},
+  {name:"Blastoise",   pokeId:9,   energias:["agua"],                     tags:["Agua"]},
+  {name:"Brionne",     pokeId:729, energias:["agua"],                     tags:["Agua"]},
+  {name:"Buzzwole",    pokeId:794, energias:["planta","lucha"],           tags:["Bicho","Lucha"]},
+  {name:"Calyrex",     pokeId:898, energias:["psiquico","planta"],        tags:["Psíquico","Planta"]},
+  {name:"Celesteela",  pokeId:797, energias:["metal","incoloro"],         tags:["Acero","Volador"]},
+  {name:"Cyclizar",    pokeId:967, energias:["dragon","incoloro"],        tags:["Dragón","Normal"]},
+  {name:"Dracovish",   pokeId:882, energias:["agua","dragon"],            tags:["Agua","Dragón"]},
+  {name:"Dracozolt",   pokeId:880, energias:["rayo","dragon"],            tags:["Eléctrico","Dragón"]},
+  {name:"Dragapult",   pokeId:887, energias:["dragon","psiquico"],        tags:["Dragón","Fantasma"]},
+  {name:"Drifloon",    pokeId:425, energias:["psiquico","incoloro"],      tags:["Fantasma","Volador"]},
+  {name:"Ferroseed",   pokeId:597, energias:["planta","metal"],           tags:["Planta","Acero"]},
+  {name:"Fletchinder", pokeId:662, energias:["fuego","incoloro"],         tags:["Fuego","Volador"]},
+  {name:"Grafaiai",    pokeId:946, energias:["psiquico","incoloro"],      tags:["Veneno","Normal"]},
+  {name:"Greedent",    pokeId:820, energias:["incoloro"],                 tags:["Normal"]},
+  {name:"Grimmsnarl",  pokeId:861, energias:["oscuro","psiquico","hada"], tags:["Oscuro","Hada"]},
+  {name:"Guzzlord",    pokeId:799, energias:["oscuro","dragon"],          tags:["Oscuro","Dragón"]},
+  {name:"Hatenna",     pokeId:856, energias:["psiquico"],                 tags:["Psíquico"]},
+  {name:"Inteleon",    pokeId:818, energias:["agua"],                     tags:["Agua"]},
+  {name:"Jellicent",   pokeId:593, energias:["agua","psiquico"],          tags:["Agua","Fantasma"]},
+  {name:"Jigglypuff",  pokeId:39,  energias:["incoloro","hada"],          tags:["Normal","Hada"]},
+  {name:"Kartana",     pokeId:798, energias:["planta","metal"],           tags:["Planta","Acero"]},
+  {name:"Kecleon",     pokeId:352, energias:["incoloro"],                 tags:["Normal"]},
+  {name:"Kleavor",     pokeId:900, energias:["planta","lucha"],           tags:["Bicho","Roca"]},
+  {name:"Komala",      pokeId:775, energias:["incoloro"],                 tags:["Normal"]},
+  {name:"Kubfu",       pokeId:891, energias:["lucha"],                    tags:["Lucha"]},
+  {name:"Lugia",       pokeId:249, energias:["psiquico","incoloro"],      tags:["Psíquico","Volador"]},
+  {name:"Lunala",      pokeId:792, energias:["psiquico"],                 tags:["Psíquico","Fantasma"]},
+  {name:"Mime Jr.",    pokeId:439, energias:["psiquico","hada"],          tags:["Psíquico","Hada"]},
+  {name:"Minior",      pokeId:774, energias:["lucha","incoloro"],         tags:["Roca","Volador"]},
+  {name:"Munchlax",    pokeId:446, energias:["incoloro"],                 tags:["Normal"]},
+  {name:"Murkrow",     pokeId:198, energias:["oscuro","incoloro"],        tags:["Oscuro","Volador"]},
+  {name:"Naganadel",   pokeId:804, energias:["psiquico","dragon"],        tags:["Veneno","Dragón"]},
+  {name:"Necrozma",    pokeId:800, energias:["psiquico"],                 tags:["Psíquico"]},
+  {name:"Nihilego",    pokeId:793, energias:["lucha","psiquico"],         tags:["Roca","Veneno"]},
+  {name:"Pheromosa",   pokeId:795, energias:["planta","lucha"],           tags:["Bicho","Lucha"]},
+  {name:"Pikipek",     pokeId:731, energias:["incoloro"],                 tags:["Normal","Volador"]},
+  {name:"Poipole",     pokeId:803, energias:["psiquico"],                 tags:["Veneno"]},
+  {name:"Polteageist", pokeId:854, energias:["psiquico"],                 tags:["Fantasma"]},
+  {name:"Popplio",     pokeId:728, energias:["agua"],                     tags:["Agua"]},
+  {name:"Primarina",   pokeId:730, energias:["agua","hada"],              tags:["Agua","Hada"]},
+  {name:"Regidrago",   pokeId:895, energias:["dragon"],                   tags:["Dragón"]},
+  {name:"Regieleki",   pokeId:894, energias:["rayo"],                     tags:["Eléctrico"]},
+  {name:"Sirfetch'd",  pokeId:865, energias:["lucha"],                    tags:["Lucha"]},
+  {name:"Skuntank",    pokeId:435, energias:["psiquico","oscuro"],        tags:["Veneno","Oscuro"]},
+  {name:"Sobble",      pokeId:816, energias:["agua"],                     tags:["Agua"]},
+  {name:"Solgaleo",    pokeId:791, energias:["psiquico","metal"],         tags:["Psíquico","Acero"]},
+  {name:"Spectrier",   pokeId:897, energias:["psiquico"],                 tags:["Fantasma"]},
+  {name:"Stakataka",   pokeId:805, energias:["lucha","metal"],            tags:["Roca","Acero"]},
+  {name:"Steenee",     pokeId:762, energias:["planta"],                   tags:["Planta"]},
+  {name:"Toxapex",     pokeId:748, energias:["agua"],                     tags:["Veneno","Agua"]},
+  {name:"Toxicroak",   pokeId:454, energias:["lucha","psiquico"],         tags:["Veneno","Lucha"]},
+  {name:"Type: Null",  pokeId:772, energias:["incoloro"],                 tags:["Normal"]},
+  {name:"Venusaur",    pokeId:3,   energias:["planta"],                   tags:["Planta","Veneno"]},
+  {name:"Whiscash",    pokeId:340, energias:["agua","lucha"],             tags:["Agua","Tierra"]},
+  {name:"Wishiwashi",  pokeId:746, energias:["agua"],                     tags:["Agua"]},
+  {name:"Wyrdeer",     pokeId:899, energias:["incoloro","psiquico"],      tags:["Normal","Psíquico"]},
+  {name:"Xurkitree",   pokeId:796, energias:["rayo"],                     tags:["Eléctrico"]},
+  {name:"Zygarde",     pokeId:718, energias:["dragon","lucha"],           tags:["Dragón","Tierra"]},
 ];
 
 const ALPHA=[...POKEMON].sort((a,b)=>a.name.localeCompare(b.name));
 
-// ═══════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════
+// ═══ HELPERS ═══════════════════════
 function sprite(id){return`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/${id}.png`;}
 function spriteFb(id){return`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`;}
-
-// TCGPlayer URL — funciona en móvil y desktop
-function tcgUrl(name){
-  return`https://www.tcgplayer.com/search/pokemon/product?productLineName=pokemon&q=${encodeURIComponent(name)}&view=grid&ProductTypeName=Cards`;
-}
-
-const TYPE_E={
-  "Fuego":"fuego","Agua":"agua","Hielo":"agua","Eléctrico":"rayo",
-  "Planta":"planta","Bicho":"planta",
-  "Lucha":"lucha","Roca":"lucha","Tierra":"lucha",
-  "Psíquico":"psiquico","Fantasma":"psiquico","Veneno":"psiquico",
-  "Oscuro":"oscuro","Acero":"metal","Dragón":"dragon",
-  "Normal":"incoloro","Volador":"incoloro","Hada":"hada",
-};
+function tcgUrl(name){return`https://www.pokemontcg.io/cards?q=${encodeURIComponent(name)}`;}
+const TYPE_E={"Fuego":"fuego","Agua":"agua","Hielo":"agua","Eléctrico":"rayo","Planta":"planta","Bicho":"planta","Lucha":"lucha","Roca":"lucha","Tierra":"lucha","Psíquico":"psiquico","Fantasma":"psiquico","Veneno":"psiquico","Oscuro":"oscuro","Acero":"metal","Dragón":"dragon","Normal":"incoloro","Volador":"incoloro","Hada":"hada"};
 function tagColor(tag){const eid=TYPE_E[tag]||"incoloro";return(ENERGIAS.find(e=>e.id===eid)||{color:"#888"}).color;}
 function eColor(id){return(ENERGIAS.find(e=>e.id===id)||{color:"#888"}).color;}
+function sid(name){return'card-'+name.replace(/[^a-z0-9]/gi,'_');}
 
-// ═══════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════
+// ═══ RENDER ════════════════════════
 let current="todos";
 
 function cardHTML(p,clr){
   const fc=found.has(p.name);
   const tags=p.tags.map(t=>`<span class="poke-tag" style="color:${tagColor(t)};border-color:${tagColor(t)}55">${t}</span>`).join('');
-  const safeId='card-'+p.name.replace(/[^a-z0-9]/gi,'_');
-  const safeName=p.name.replace(/'/g,"\\'");
-  return`
-    <div class="poke-card${fc?' fc':''}" style="--clr:${clr}" id="${safeId}">
-      <button class="chk-btn" onclick="event.preventDefault();event.stopPropagation();toggleFound('${safeName}')">✓</button>
-      <a class="poke-link" href="${tcgUrl(p.name)}" target="_blank" rel="noopener">
-        <div class="img-wrap">
-          <img src="${sprite(p.pokeId)}" alt="${p.name}" loading="lazy"
-               onerror="this.src='${spriteFb(p.pokeId)}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}">
-          <div class="fallback">❓</div>
-        </div>
-        <div class="poke-name">${p.name}</div>
-        <div class="poke-tags">${tags}</div>
-      </a>
-      <div class="found-bar">✓ Encontrado</div>
-    </div>`;
+  const sn=p.name.replace(/'/g,"\\'");
+  return`<div class="poke-card${fc?' fc':''}" style="--clr:${clr}" id="${sid(p.name)}">
+    <button class="chk-btn" onclick="event.preventDefault();event.stopPropagation();toggleFound('${sn}')">✓</button>
+    <a class="poke-link" href="${tcgUrl(p.name)}" target="_blank" rel="noopener">
+      <div class="img-wrap">
+        <img src="${sprite(p.pokeId)}" alt="${p.name}" loading="lazy"
+             onerror="this.src='${spriteFb(p.pokeId)}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}">
+        <div class="fallback">❓</div>
+      </div>
+      <div class="poke-name">${p.name}</div>
+      <div class="poke-tags">${tags}</div>
+    </a>
+    <div class="found-bar">✓ Encontrado</div>
+  </div>`;
 }
 
 function sectionHTML(e){
   const lista=POKEMON.filter(p=>p.energias.includes(e.id));
   if(!lista.length)return'';
-  return`
-    <div class="type-section" style="--clr:${e.color}">
-      <div class="sec-header" style="--clr:${e.color};border-color:${e.color}">
-        <div class="big-ico" style="background:${e.color}">${e.icon}</div>
-        <div>
-          <h2 style="color:${e.color}">ENERGÍA ${e.label.toUpperCase()}</h2>
-          ${e.nota?`<div class="sub">${e.nota}</div>`:''}
-        </div>
-        <div class="cnt">${lista.length} pokémon</div>
+  return`<div class="type-section" style="--clr:${e.color}">
+    <div class="sec-header" style="--clr:${e.color};border-color:${e.color}">
+      <div class="big-ico" style="background:${e.color}">${e.icon}</div>
+      <div>
+        <h2 style="color:${e.color}">ENERGÍA ${e.label.toUpperCase()}</h2>
+        ${e.nota?`<div class="sub">${e.nota}</div>`:''}
       </div>
-      <div class="poke-grid">${lista.map(p=>cardHTML(p,e.color)).join('')}</div>
-    </div>`;
+      <div class="cnt">${lista.length} pokémon</div>
+    </div>
+    <div class="poke-grid">${lista.map(p=>cardHTML(p,e.color)).join('')}</div>
+  </div>`;
 }
 
 function renderMain(){
   const el=document.getElementById('main');
   const azBar=document.getElementById('az-bar');
-
   if(current==='todos'){
-    // Índice A-Z visible
     azBar.classList.add('visible');
-
     const totalF=ALPHA.filter(p=>found.has(p.name)).length;
-    const alphaItems=ALPHA.map(p=>{
+    const items=ALPHA.map(p=>{
       const fc=found.has(p.name);
-      const safeId='card-'+p.name.replace(/[^a-z0-9]/gi,'_');
-      return`<div class="a-item${fc?' af':''}" onclick="jumpTo('${safeId}')">
+      return`<div class="a-item${fc?' af':''}" onclick="jumpTo('${sid(p.name)}')">
         <span class="a-chk">✓</span>
-        <span style="overflow:hidden;text-overflow:ellipsis">${p.name}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
       </div>`;
     }).join('');
-
     const sections=ENERGIAS.filter(e=>e.id!=='todos').map(sectionHTML).join('');
-
-    el.innerHTML=`
-      <div class="alpha-section">
-        <div class="alpha-title">★ Lista completa — ${totalF}/${ALPHA.length} encontrados</div>
-        <div class="alpha-grid">${alphaItems}</div>
-        <hr class="alpha-divider">
-      </div>
-      ${sections}`;
-
-    // Construir barra A-Z
+    el.innerHTML=`<div class="alpha-section">
+      <div class="alpha-title">★ Lista completa — ${totalF}/${ALPHA.length} encontrados</div>
+      <div class="alpha-grid">${items}</div>
+      <hr class="alpha-divider">
+    </div>${sections}`;
     buildAZBar();
   } else {
     azBar.classList.remove('visible');
@@ -383,51 +333,36 @@ function renderMain(){
 }
 
 function buildAZBar(){
-  // Letras que tienen al menos un Pokémon
-  const letters=[...new Set(ALPHA.map(p=>p.name[0].toUpperCase()))].sort();
-  const allLetters='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  const azBar=document.getElementById('az-bar');
-  azBar.innerHTML=allLetters.map(l=>`
-    <button class="az-btn${letters.includes(l)?' has':''}"
-            onclick="jumpToLetter('${l}')"
-            ${letters.includes(l)?'':' disabled style="opacity:0.25;cursor:default"'}>
+  const tiene=new Set(ALPHA.map(p=>p.name[0].toUpperCase()));
+  document.getElementById('az-bar').innerHTML='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>`
+    <button class="az-btn${tiene.has(l)?' has':''}"
+            ${tiene.has(l)?`onclick="jumpToLetter('${l}')"`:' disabled'}>
       ${l}
     </button>`).join('');
 }
 
-function jumpToLetter(letter){
-  // Encontrar el primer Pokémon con esa letra en el grid
-  const first=ALPHA.find(p=>p.name[0].toUpperCase()===letter);
-  if(first) jumpTo('card-'+first.name.replace(/[^a-z0-9]/gi,'_'));
+function jumpToLetter(l){
+  const first=ALPHA.find(p=>p.name[0].toUpperCase()===l);
+  if(first)jumpTo(sid(first.name));
 }
 
 function jumpTo(id){
   const el=document.getElementById(id);
-  if(el){
-    el.scrollIntoView({behavior:'smooth',block:'center'});
-    el.style.outline='2px solid #f5c842';
-    setTimeout(()=>el.style.outline='',1200);
-  }
+  if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='2px solid #f5c842';setTimeout(()=>el.style.outline='',1200);}
 }
 
 function renderSidebar(){
-  const lista=current==='todos'
-    ? ALPHA
-    : ALPHA.filter(p=>p.energias.includes(current));
+  const lista=current==='todos'?ALPHA:ALPHA.filter(p=>p.energias.includes(current));
   const totalF=lista.filter(p=>found.has(p.name)).length;
   const clr=current==='todos'?'#f5c842':eColor(current);
   const eLabel=current==='todos'?'Lista completa':`Energía ${ENERGIAS.find(e=>e.id===current)?.label||''}`;
   document.getElementById('sb-title').textContent=eLabel;
-  document.getElementById('sb-stats').innerHTML=
-    `<span style="color:${clr}">${totalF}</span><span style="color:var(--muted)"> / ${lista.length} encontrados</span>`;
-  document.getElementById('sb-list').innerHTML=lista.map(p=>{
-    const fc=found.has(p.name);
-    const safeId='card-'+p.name.replace(/[^a-z0-9]/gi,'_');
-    return`<button class="s-item${fc?' sf':''}" onclick="jumpTo('${safeId}')">
+  document.getElementById('sb-stats').innerHTML=`<span style="color:${clr}">${totalF}</span><span style="color:var(--muted)"> / ${lista.length}</span>`;
+  document.getElementById('sb-list').innerHTML=lista.map(p=>`
+    <button class="s-item${found.has(p.name)?' sf':''}" onclick="jumpTo('${sid(p.name)}')">
       <span class="s-chk">✓</span>
       <span class="s-nm">${p.name}</span>
-    </button>`;
-  }).join('');
+    </button>`).join('');
 }
 
 function renderFilters(){
@@ -441,11 +376,8 @@ function renderFilters(){
 function setFilter(id){current=id;render();window.scrollTo({top:0,behavior:'smooth'});}
 function render(){renderFilters();renderSidebar();renderMain();}
 
-// Botón volver arriba
 window.addEventListener('scroll',()=>{
-  const btn=document.getElementById('back-top');
-  if(window.scrollY>300)btn.classList.add('visible');
-  else btn.classList.remove('visible');
+  document.getElementById('back-top').classList.toggle('visible',window.scrollY>300);
 });
 
 render();
