@@ -216,6 +216,24 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
 .pb-add{padding:0.3rem 0.5rem;border-radius:6px;border:none;background:#ff6b35;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.62rem;cursor:pointer;white-space:nowrap;}
 .pb-empty{color:var(--muted);font-size:0.65rem;font-weight:700;text-align:center;padding:0.8rem 0;}
 
+.pb-copy{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem;padding:0 0.1rem;transition:color 0.12s;}
+.pb-copy:hover{color:var(--text);}
+.pb-report-row{display:flex;gap:0.3rem;padding:0 0.45rem 0.5rem;border-top:1px solid var(--border);padding-top:0.4rem;}
+.pb-report-row input{flex:1;padding:0.28rem 0.4rem;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.65rem;font-weight:700;outline:none;}
+.pb-report-row input:focus{border-color:#ff6b35;}
+.pb-report-row input::placeholder{color:var(--muted);}
+.pb-report-btn{padding:0.28rem 0.5rem;border-radius:6px;border:none;background:linear-gradient(135deg,#f5c842,#ff6b35);color:#111;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.6rem;cursor:pointer;white-space:nowrap;}
+
+/* MODAL INFORME */
+#informe-modal{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);padding:1rem;}
+#informe-modal.open{display:flex;}
+.informe-wrap{display:flex;flex-direction:column;align-items:center;gap:0.8rem;max-width:420px;width:100%;}
+#informe-canvas{border-radius:16px;max-width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.6);}
+.informe-actions{display:flex;gap:0.5rem;width:100%;}
+.inf-btn{flex:1;padding:0.5rem;border-radius:10px;border:none;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.7rem;cursor:pointer;}
+.inf-btn.download{background:#f5c842;color:#111;}
+.inf-btn.close{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid var(--border);}
+
 /* FAB NUEVA BÚSQUEDA */
 #fab-nueva{position:fixed;bottom:4rem;right:1rem;width:44px;height:44px;border-radius:50%;background:#7986cb;border:none;color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(121,134,203,0.5);transition:all 0.2s;}
 #fab-nueva:hover{transform:scale(1.1);}
@@ -298,11 +316,16 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
   <div class="pb-header">
     <h3>🔥 MÁS BUSCADOS</h3>
     <span id="pb-count"></span>
+    <button class="pb-copy" onclick="copiarBuscados()" title="Copiar lista">📋</button>
   </div>
   <div class="pb-list" id="pb-list"></div>
   <div class="pb-form">
     <input id="pb-input" type="text" placeholder="Nombre del Pokémon" autocomplete="off">
     <button class="pb-add" onclick="agregarBuscado()">+</button>
+  </div>
+  <div class="pb-report-row">
+    <input id="pb-cliente" type="text" placeholder="Nombre del cliente..." autocomplete="off">
+    <button class="pb-report-btn" onclick="generarInforme()">🖼 Generar imagen</button>
   </div>
 </div>
 
@@ -346,6 +369,17 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
   </div>
 </div>
 
+<!-- Modal informe -->
+<div id="informe-modal" onclick="if(event.target===this)cerrarInforme()">
+  <div class="informe-wrap">
+    <canvas id="informe-canvas"></canvas>
+    <div class="informe-actions">
+      <button class="inf-btn download" onclick="descargarInforme()">⬇ Guardar imagen</button>
+      <button class="inf-btn close" onclick="cerrarInforme()">✕ Cerrar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════════
 // STORAGE
@@ -366,6 +400,25 @@ let buscados=[];
 try{const s=localStorage.getItem(SK_BUSCADOS);if(s)buscados=JSON.parse(s);}catch(e){}
 
 function saveFound(){try{localStorage.setItem(SK_FOUND,JSON.stringify([...found]));}catch(e){}}
+
+// Al iniciar, resolver automáticamente todas las cartas sin pokeId
+function resolverIdsLocales(){
+  let cambios=false;
+  listaActual.forEach((p,i)=>{
+    if(!p.pokeId){
+      const key=norm(p.name);
+      let id=POKE_ID_MAP[key];
+      if(!id){
+        const k=Object.keys(POKE_ID_MAP).find(k2=>
+          (k2.includes(key)&&key.length>=4)||(key.includes(k2)&&k2.length>=4)
+        );
+        if(k)id=POKE_ID_MAP[k];
+      }
+      if(id){listaActual[i].pokeId=id;cambios=true;}
+    }
+  });
+  if(cambios)saveLista();
+}
 function saveLista(){try{localStorage.setItem(SK_LISTA,JSON.stringify(listaActual));}catch(e){}}
 function saveBuscados(){try{localStorage.setItem(SK_BUSCADOS,JSON.stringify(buscados));}catch(e){}}
 function toggleFound(name){if(found.has(name))found.delete(name);else found.add(name);saveFound();render();}
@@ -592,12 +645,29 @@ function abrirPopup(p){
   name.textContent=p.name;
   tags.innerHTML=p.tags.map(t=>`<span class="popup-tag" style="color:${tagColor(t)};border-color:${tagColor(t)}55">${t}</span>`).join('');
 
-  // Mostrar campo corrección solo si no tiene imagen
+  // Si no tiene pokeId, intentar resolverlo automáticamente con el mapa local
   const fixSection=document.getElementById('fix-section');
   const fixInput=document.getElementById('fix-input');
   if(!p.pokeId){
-    fixSection.classList.add('visible');
-    fixInput.value=p.name;
+    // Intentar resolver automáticamente
+    const autoId = POKE_ID_MAP[norm(p.name)] ||
+      (()=>{ const k=Object.keys(POKE_ID_MAP).find(k=>k.includes(norm(p.name))&&norm(p.name).length>=4 || norm(p.name).includes(k)&&k.length>=4); return k?POKE_ID_MAP[k]:null; })();
+    if(autoId){
+      // Encontrado — actualizar silenciosamente
+      const idx=listaActual.findIndex(x=>x.name===p.name);
+      if(idx>=0){ listaActual[idx].pokeId=autoId; saveLista(); p=listaActual[idx]; }
+      const img=document.getElementById('popup-img');
+      const fb=document.getElementById('popup-fallback');
+      img.src=`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/${autoId}.png`;
+      img.onerror=function(){this.src=`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${autoId}.png`;this.onerror=function(){this.style.display='none';fb.style.display='flex';};};
+      img.style.display='block';fb.style.display='none';
+      fixSection.classList.remove('visible');
+      fixInput.value='';
+      render(); // actualiza la carta en la grilla también
+    } else {
+      fixSection.classList.add('visible');
+      fixInput.value=p.name;
+    }
   } else {
     fixSection.classList.remove('visible');
     fixInput.value='';
@@ -860,6 +930,192 @@ function renderFilters(){
 
 function setFilter(id){current=id;render();window.scrollTo({top:0,behavior:'smooth'});}
 function render(){renderFilters();renderSidebar();renderMain();}
+
+// ══════════════════════════════════════
+// COPIAR LISTA MÁS BUSCADOS
+// ══════════════════════════════════════
+function copiarBuscados(){
+  if(!buscados.length){alert('No hay Pokémon en la lista');return;}
+  const texto=buscados.join('\n');
+  const btn=document.querySelector('.pb-copy');
+  const fallback=()=>{
+    const el=document.createElement('input');el.value=texto;
+    el.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px;';
+    document.body.appendChild(el);el.focus();el.select();el.setSelectionRange(0,9999);
+    try{document.execCommand('copy');}catch(e){}
+    document.body.removeChild(el);
+  };
+  const doToast=()=>{btn.textContent='✓';setTimeout(()=>btn.textContent='📋',2000);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(doToast).catch(()=>{fallback();doToast();});
+  }else{fallback();doToast();}
+}
+
+// ══════════════════════════════════════
+// GENERAR INFORME IMAGEN (Canvas)
+// ══════════════════════════════════════
+let informeDataUrl=null;
+
+function generarInforme(){
+  const cliente=document.getElementById('pb-cliente').value.trim()||'Cliente';
+  const alpha=getAlpha();
+  const encontrados=alpha.filter(p=>found.has(p.name));
+  const pendientes=alpha.filter(p=>!found.has(p.name));
+
+  const W=900;
+  const PADDING=48;
+  const COL=3;
+  const ROW_H=36;
+  const HEADER_H=220;
+  const SECTION_H=50;
+  const maxRows=Math.ceil(Math.max(encontrados.length,pendientes.length)/COL);
+  const listH=(Math.ceil(encontrados.length/COL)+Math.ceil(pendientes.length/COL))*ROW_H+SECTION_H*2+40;
+  const H=HEADER_H+listH+80;
+
+  const canvas=document.getElementById('informe-canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // Fondo degradado oscuro
+  const bgGrad=ctx.createLinearGradient(0,0,0,H);
+  bgGrad.addColorStop(0,'#0d0f14');
+  bgGrad.addColorStop(1,'#1a1f2e');
+  ctx.fillStyle=bgGrad;
+  ctx.fillRect(0,0,W,H);
+
+  // Borde dorado sutil
+  ctx.strokeStyle='rgba(245,200,66,0.3)';
+  ctx.lineWidth=2;
+  ctx.strokeRect(1,1,W-2,H-2);
+
+  // Línea decorativa superior
+  const lineGrad=ctx.createLinearGradient(0,0,W,0);
+  lineGrad.addColorStop(0,'transparent');
+  lineGrad.addColorStop(0.3,'#f5c842');
+  lineGrad.addColorStop(0.7,'#ff6b35');
+  lineGrad.addColorStop(1,'transparent');
+  ctx.fillStyle=lineGrad;
+  ctx.fillRect(0,0,W,4);
+
+  // LOGO / Nombre empresa
+  ctx.textAlign='center';
+  ctx.fillStyle='#f5c842';
+  ctx.font='bold 52px "Arial Black", Arial, sans-serif';
+  ctx.letterSpacing='4px';
+  ctx.fillText('PALMDALE GAMES',W/2,70);
+
+  // Subtítulo empresa
+  ctx.fillStyle='rgba(255,255,255,0.4)';
+  ctx.font='18px Arial, sans-serif';
+  ctx.fillText('Colección Pokémon TCG',W/2,100);
+
+  // Línea separadora
+  ctx.fillStyle='rgba(245,200,66,0.2)';
+  ctx.fillRect(PADDING,118,W-PADDING*2,1);
+
+  // Datos del pedido
+  const fecha=new Date().toLocaleDateString('es-CL',{year:'numeric',month:'long',day:'numeric'});
+  ctx.fillStyle='rgba(255,255,255,0.6)';
+  ctx.font='16px Arial, sans-serif';
+  ctx.textAlign='left';
+  ctx.fillText(`Cliente:  ${cliente}`,PADDING,148);
+  ctx.textAlign='right';
+  ctx.fillText(`Fecha:  ${fecha}`,W-PADDING,148);
+
+  // Resumen
+  ctx.textAlign='center';
+  const resumen=`${encontrados.length} encontradas  ·  ${pendientes.length} pendientes  ·  ${alpha.length} total`;
+  ctx.fillStyle='rgba(255,255,255,0.45)';
+  ctx.font='15px Arial, sans-serif';
+  ctx.fillText(resumen,W/2,174);
+
+  // Barra de progreso
+  const barW=W-PADDING*2;const barH=8;const barY=188;
+  ctx.fillStyle='rgba(255,255,255,0.08)';
+  roundRect(ctx,PADDING,barY,barW,barH,4);
+  ctx.fill();
+  if(alpha.length>0){
+    const progGrad=ctx.createLinearGradient(PADDING,0,PADDING+barW,0);
+    progGrad.addColorStop(0,'#22c55e');progGrad.addColorStop(1,'#16a34a');
+    ctx.fillStyle=progGrad;
+    roundRect(ctx,PADDING,barY,barW*(encontrados.length/alpha.length),barH,4);
+    ctx.fill();
+  }
+
+  // ── SECCIÓN ENCONTRADAS ──
+  let y=HEADER_H+10;
+  drawSectionHeader(ctx,'✅  CARTAS ENCONTRADAS',encontrados.length,'#22c55e',y,W,PADDING);
+  y+=SECTION_H;
+  ctx.font='15px Arial, sans-serif';
+  encontrados.forEach((p,i)=>{
+    const col=i%COL;const row=Math.floor(i/COL);
+    const x=PADDING+col*(barW/COL);
+    const cy=y+row*ROW_H+20;
+    // Fondo alternado
+    if(row%2===0){ctx.fillStyle='rgba(34,197,94,0.04)';ctx.fillRect(x-4,cy-18,barW/COL,ROW_H);}
+    ctx.fillStyle='#22c55e';ctx.font='bold 13px Arial';
+    ctx.textAlign='left';ctx.fillText('✓',x+4,cy);
+    ctx.fillStyle='rgba(255,255,255,0.85)';ctx.font='14px Arial';
+    ctx.fillText(p.name,x+22,cy);
+  });
+
+  y+=Math.ceil(encontrados.length/COL)*ROW_H+20;
+
+  // ── SECCIÓN PENDIENTES ──
+  drawSectionHeader(ctx,'⏳  PENDIENTES',pendientes.length,'#f5c842',y,W,PADDING);
+  y+=SECTION_H;
+  pendientes.forEach((p,i)=>{
+    const col=i%COL;const row=Math.floor(i/COL);
+    const x=PADDING+col*(barW/COL);
+    const cy=y+row*ROW_H+20;
+    if(row%2===0){ctx.fillStyle='rgba(245,200,66,0.04)';ctx.fillRect(x-4,cy-18,barW/COL,ROW_H);}
+    ctx.fillStyle='rgba(245,200,66,0.6)';ctx.font='bold 13px Arial';
+    ctx.textAlign='left';ctx.fillText('·',x+4,cy);
+    ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font='14px Arial';
+    ctx.fillText(p.name,x+16,cy);
+  });
+
+  // Footer
+  ctx.fillStyle='rgba(255,255,255,0.2)';
+  ctx.font='13px Arial';ctx.textAlign='center';
+  ctx.fillText('palmdalegames.github.io  ·  Generado automáticamente',W/2,H-18);
+
+  informeDataUrl=canvas.toDataURL('image/png');
+  document.getElementById('informe-modal').classList.add('open');
+}
+
+function drawSectionHeader(ctx,titulo,count,color,y,W,PADDING){
+  ctx.fillStyle=color+'22';
+  ctx.fillRect(PADDING-8,y+4,W-PADDING*2+16,38);
+  ctx.strokeStyle=color+'55';ctx.lineWidth=1;
+  ctx.strokeRect(PADDING-8,y+4,W-PADDING*2+16,38);
+  ctx.fillStyle=color;ctx.font='bold 17px Arial';ctx.textAlign='left';
+  ctx.fillText(titulo,PADDING,y+28);
+  ctx.fillStyle='rgba(255,255,255,0.35)';ctx.font='14px Arial';ctx.textAlign='right';
+  ctx.fillText(`${count} cartas`,W-PADDING,y+28);
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function descargarInforme(){
+  if(!informeDataUrl)return;
+  const a=document.createElement('a');
+  const cliente=document.getElementById('pb-cliente').value.trim()||'cliente';
+  a.href=informeDataUrl;
+  a.download=`palmdale_${cliente.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.png`;
+  a.click();
+}
+
+function cerrarInforme(){
+  document.getElementById('informe-modal').classList.remove('open');
+}
 
 window.addEventListener('scroll',()=>{document.getElementById('back-top').classList.toggle('visible',window.scrollY>300);});
 
