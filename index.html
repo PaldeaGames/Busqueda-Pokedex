@@ -81,6 +81,12 @@ header p{color:var(--muted);font-size:0.68rem;font-weight:700;}
 .found-bar{position:absolute;bottom:0;left:0;right:0;background:var(--found);color:#111;font-size:0.4rem;font-weight:900;text-transform:uppercase;padding:0.11rem;text-align:center;display:none;}
 .poke-card.fc .found-bar{display:block;}
 
+/* BOTÓN COPIAR — solo móvil */
+.copy-btn{display:none;width:100%;margin-top:0.28rem;padding:0.22rem 0;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--muted);font-size:0.5rem;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px;transition:all 0.15s;font-family:Nunito,sans-serif;}
+.copy-btn:active{background:var(--clr);color:#111;border-color:var(--clr);}
+.copy-btn.copiado{background:var(--found)!important;color:#111!important;border-color:var(--found)!important;}
+@media(max-width:520px){.copy-btn{display:block;}}
+
 /* ── BOTÓN VOLVER ARRIBA ───────────── */
 #back-top{position:fixed;bottom:1.2rem;right:2rem;width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid rgba(255,255,255,0.18);color:var(--text);font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.5);transition:all 0.2s;}
 #back-top.visible{display:flex;}
@@ -286,6 +292,7 @@ function cardHTML(p,clr){
       <div class="poke-tags">${tags}</div>
     </a>
     <div class="found-bar">✓ Encontrado</div>
+    <button class="copy-btn" onclick="event.preventDefault();event.stopPropagation();copiarNombre(this,'')">📋 Copiar nombre</button>
   </div>`;
 }
 
@@ -375,6 +382,23 @@ function renderFilters(){
 
 function setFilter(id){current=id;render();window.scrollTo({top:0,behavior:'smooth'});}
 function render(){renderFilters();renderSidebar();renderMain();}
+
+function copiarNombre(btn,name){
+  navigator.clipboard.writeText(name).then(()=>{
+    btn.textContent='✓ Copiado!';
+    btn.classList.add('copiado');
+    setTimeout(()=>{btn.textContent='📋 Copiar nombre';btn.classList.remove('copiado');},2000);
+  }).catch(()=>{
+    // fallback para navegadores más viejos
+    const el=document.createElement('textarea');
+    el.value=name;document.body.appendChild(el);
+    el.select();document.execCommand('copy');
+    document.body.removeChild(el);
+    btn.textContent='✓ Copiado!';
+    btn.classList.add('copiado');
+    setTimeout(()=>{btn.textContent='📋 Copiar nombre';btn.classList.remove('copiado');},2000);
+  });
+}
 
 window.addEventListener('scroll',()=>{
   document.getElementById('back-top').classList.toggle('visible',window.scrollY>300);
