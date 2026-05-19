@@ -424,20 +424,49 @@ function buildDefaultLista(){
 // ══════════════════════════════════════
 // PARSEAR NUEVA LISTA
 // ══════════════════════════════════════
-const POKEDATA=buildDefaultLista().reduce((m,p)=>{m[p.name.toLowerCase()]=p;return m;},{});
+// Normaliza strings: sin tildes, minúsculas, sin caracteres especiales
+function norm(s){
+  return s.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
 
-function parsearListado(texto){
-  return texto.split('\n').map(l=>l.trim()).filter(l=>l.length>0).map(nombre=>{
-    const key=nombre.toLowerCase();
-    let data=POKEDATA[key];
-    if(!data){const match=Object.keys(POKEDATA).find(k=>k.includes(key)||key.includes(k));if(match)data=POKEDATA[match];}
-    if(data)return{...data,name:nombre};
-    return{name:nombre,pokeId:null,energias:["incoloro"],tags:["?"]};
-  });
+const POKEDATA=buildDefaultLista().reduce((m,p)=>{m[norm(p.name)]=p;return m;},{});
+const POKEKEYS=Object.keys(POKEDATA);
+
+function buscarPoke(nombre){
+  const key=norm(nombre);
+  if(POKEDATA[key])return POKEDATA[key];
+  let match=POKEKEYS.find(k=>k===key);
+  if(!match)match=POKEKEYS.find(k=>k.includes(key)&&key.length>=3);
+  if(!match)match=POKEKEYS.find(k=>key.includes(k)&&k.length>=3);
+  if(!match){const fw=key.split(' ')[0];if(fw.length>=4)match=POKEKEYS.find(k=>k.startsWith(fw));}
+  return match?POKEDATA[match]:null;
+}
+
+async function fetchPokeId(nombre){
+  try{
+    const slug=norm(nombre).replace(/\s+/g,'-');
+    const res=await fetch('https://pokeapi.co/api/v2/pokemon/'+slug);
+    if(res.ok){const d=await res.json();return d.id;}
+  }catch(e){}
+  return null;
+}
+
+async function parsearListado(texto){
+  const lineas=texto.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  const result=[];
+  for(const nombre of lineas){
+    const data=buscarPoke(nombre);
+    if(data){result.push({...data,name:nombre});}
+    else{const pid=await fetchPokeId(nombre);result.push({name:nombre,pokeId:pid,energias:["incoloro"],tags:["?"]});}
+  }
+  return result;
 }
 
 let confirmandoCarga=false;let confirmTimer=null;
-function cargarNuevaBusqueda(){
+async function cargarNuevaBusqueda(){
   const btn=document.getElementById('pn-load-btn');
   const texto=document.getElementById('pn-textarea').value.trim();
   if(!texto){alert('Pegá al menos un nombre');return;}
@@ -451,7 +480,8 @@ function cargarNuevaBusqueda(){
   clearTimeout(confirmTimer);confirmandoCarga=false;
   btn.textContent='Cargar listado';btn.classList.remove('confirmar');
   found=new Set();saveFound();
-  listaActual=parsearListado(texto);saveLista();
+  document.getElementById('pn-load-btn').textContent='Cargando...';
+  listaActual=await parsearListado(texto);saveLista();
   cerrarPanels();
   document.getElementById('pn-textarea').value='';
   current='todos';render();
