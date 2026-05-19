@@ -261,7 +261,7 @@ const ALPHA=[...POKEMON].sort((a,b)=>a.name.localeCompare(b.name));
 // ═══ HELPERS ═══════════════════════
 function sprite(id){return`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/${id}.png`;}
 function spriteFb(id){return`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`;}
-function tcgUrl(name){return`https://www.pokemontcg.io/cards?q=${encodeURIComponent(name)}`;}
+function tcgUrl(name){return`https://www.pokemontcg.io/cards?q=name%3A%22${encodeURIComponent(name)}%22`;}
 const TYPE_E={"Fuego":"fuego","Agua":"agua","Hielo":"agua","Eléctrico":"rayo","Planta":"planta","Bicho":"planta","Lucha":"lucha","Roca":"lucha","Tierra":"lucha","Psíquico":"psiquico","Fantasma":"psiquico","Veneno":"psiquico","Oscuro":"oscuro","Acero":"metal","Dragón":"dragon","Normal":"incoloro","Volador":"incoloro","Hada":"hada"};
 function tagColor(tag){const eid=TYPE_E[tag]||"incoloro";return(ENERGIAS.find(e=>e.id===eid)||{color:"#888"}).color;}
 function eColor(id){return(ENERGIAS.find(e=>e.id===id)||{color:"#888"}).color;}
