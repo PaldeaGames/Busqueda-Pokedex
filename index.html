@@ -61,33 +61,114 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
 .poke-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:0.48rem;}
 
 /* CARTA */
-.poke-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--border);padding:0.5rem 0.32rem 0.4rem;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s,border-color 0.15s;}
+.poke-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--border);padding:0.5rem 0.32rem 0.4rem;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s,border-color 0.15s;cursor:pointer;}
+.poke-card:hover{transform:translateY(-3px);border-color:var(--clr);box-shadow:0 6px 20px -4px var(--clr);}
 .poke-card.fc{border-color:var(--found)!important;background:#0a1a0f;}
 .poke-card.fc::before{content:'';position:absolute;inset:0;background:rgba(34,197,94,0.05);pointer-events:none;}
+
 .chk-btn{position:absolute;top:5px;right:5px;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);background:rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.58rem;transition:all 0.15s;z-index:3;color:transparent;}
 .chk-btn:hover{border-color:var(--found);color:var(--found);}
 .poke-card.fc .chk-btn{border-color:var(--found);background:var(--found);color:#111;}
-.poke-link{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;width:100%;}
 
-/* imagen + toque largo */
+/* imagen con toque largo */
 .img-wrap{width:64px;height:64px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.3rem;position:relative;user-select:none;-webkit-user-select:none;}
 .img-wrap img{width:64px;height:64px;object-fit:contain;transition:transform 0.15s;pointer-events:none;-webkit-user-drag:none;}
+.poke-card:hover .img-wrap img{transform:scale(1.08);}
 .fallback{width:64px;height:64px;background:rgba(255,255,255,0.05);border-radius:8px;display:none;align-items:center;justify-content:center;font-size:1.5rem;}
-.copy-toast{position:absolute;inset:0;background:rgba(34,197,94,0.93);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.52rem;font-weight:900;color:#111;text-transform:uppercase;letter-spacing:0.4px;opacity:0;pointer-events:none;transition:opacity 0.15s;}
+.copy-toast{position:absolute;inset:0;background:rgba(34,197,94,0.93);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.52rem;font-weight:900;color:#111;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity 0.15s;}
 .img-wrap.copiando .copy-toast{opacity:1;}
-.img-wrap.holding img{transform:scale(0.88);}
+.img-wrap.holding img{transform:scale(0.88)!important;}
 
-.poke-name{font-weight:900;font-size:0.58rem;line-height:1.2;margin-bottom:0.22rem;}
+.poke-name{font-weight:900;font-size:0.58rem;line-height:1.2;margin-bottom:0.22rem;text-align:center;}
 .poke-card.fc .poke-name{color:var(--found);}
 .poke-tags{display:flex;flex-wrap:wrap;gap:0.1rem;justify-content:center;}
 .poke-tag{font-size:0.4rem;font-weight:900;padding:0.07rem 0.22rem;border-radius:4px;text-transform:uppercase;border:1px solid;opacity:0.85;}
 .found-bar{position:absolute;bottom:0;left:0;right:0;background:var(--found);color:#111;font-size:0.4rem;font-weight:900;text-transform:uppercase;padding:0.11rem;text-align:center;display:none;}
 .poke-card.fc .found-bar{display:block;}
-.hold-hint{display:none;font-size:0.4rem;color:var(--muted);font-weight:700;margin-top:0.18rem;}
-@media(max-width:520px){.hold-hint{display:block;}}
+
+/* ══════════════════════════════════
+   POPUP POKÉMON
+   ══════════════════════════════════ */
+#poke-popup{
+  position:fixed;inset:0;z-index:500;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px);
+  padding:1rem;
+}
+#poke-popup.open{display:flex;}
+
+.popup-card{
+  background:var(--surface);
+  border-radius:20px;
+  border:1.5px solid var(--border);
+  max-width:320px;width:100%;
+  padding:1.5rem 1.2rem 1.2rem;
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:0.8rem;
+  animation:popIn 0.2s ease;
+}
+@keyframes popIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+
+.popup-close{
+  position:absolute;top:10px;right:12px;
+  background:none;border:none;color:var(--muted);
+  font-size:1.2rem;cursor:pointer;line-height:1;
+  transition:color 0.12s;
+}
+.popup-close:hover{color:var(--text);}
+
+.popup-img{
+  width:140px;height:140px;object-fit:contain;
+  filter:drop-shadow(0 4px 20px rgba(255,255,255,0.1));
+}
+.popup-img-fallback{
+  width:140px;height:140px;
+  background:rgba(255,255,255,0.05);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:3rem;
+}
+
+.popup-name{
+  font-family:'Press Start 2P',monospace;
+  font-size:0.65rem;color:var(--text);
+  text-align:center;letter-spacing:1px;
+}
+.popup-tags{display:flex;flex-wrap:wrap;gap:0.25rem;justify-content:center;}
+.popup-tag{font-size:0.55rem;font-weight:900;padding:0.15rem 0.45rem;border-radius:6px;text-transform:uppercase;border:1px solid;opacity:0.9;}
+
+.popup-actions{display:flex;flex-direction:column;gap:0.45rem;width:100%;}
+
+.btn-agregar{
+  width:100%;padding:0.55rem;border-radius:10px;border:none;
+  background:#ff6b35;color:#fff;
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:0.75rem;
+  cursor:pointer;transition:opacity 0.15s;
+}
+.btn-agregar:hover{opacity:0.85;}
+.btn-agregar.ya{background:var(--found);pointer-events:none;}
+
+.btn-encontrado{
+  width:100%;padding:0.55rem;border-radius:10px;
+  border:1.5px solid var(--border);
+  background:transparent;color:var(--text);
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:0.72rem;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-encontrado:hover{border-color:var(--found);color:var(--found);}
+.btn-encontrado.fc{border-color:var(--found);color:var(--found);background:rgba(34,197,94,0.08);}
+
+.btn-copiar{
+  width:100%;padding:0.5rem;border-radius:10px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.04);color:var(--muted);
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:0.68rem;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-copiar:hover{border-color:var(--text);color:var(--text);}
+.btn-copiar.copiado{background:var(--found);color:#111;border-color:var(--found);}
 
 /* BOTÓN VOLVER ARRIBA */
-#back-top{position:fixed;bottom:1.2rem;right:2rem;width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid rgba(255,255,255,0.18);color:var(--text);font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.5);transition:all 0.2s;}
+#back-top{position:fixed;bottom:1.2rem;right:1rem;width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid rgba(255,255,255,0.18);color:var(--text);font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.5);transition:all 0.2s;}
 #back-top.visible{display:flex;}
 #back-top:hover{background:#f5c842;color:#111;border-color:#f5c842;}
 
@@ -99,125 +180,46 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
 .az-btn.has:hover{background:#f5c842;color:#111;}
 .az-btn:disabled{opacity:0.2;cursor:default;}
 
-/* ══════════════════════════════════
-   PANEL MÁS BUSCADOS 🔥
-   ══════════════════════════════════ */
-#fab-buscados{
-  position:fixed;bottom:1.2rem;left:1rem;
-  width:44px;height:44px;border-radius:50%;
-  background:#ff6b35;border:none;
-  color:#fff;font-size:1.2rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  z-index:200;box-shadow:0 4px 16px rgba(255,107,53,0.5);
-  transition:all 0.2s;
-}
+/* FAB MÁS BUSCADOS */
+#fab-buscados{position:fixed;bottom:1.2rem;left:1rem;width:44px;height:44px;border-radius:50%;background:#ff6b35;border:none;color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(255,107,53,0.5);transition:all 0.2s;}
 #fab-buscados:hover{transform:scale(1.1);}
 
-#panel-buscados{
-  position:fixed;bottom:4.5rem;left:1rem;
-  width:280px;max-height:60vh;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;z-index:199;
-  display:none;flex-direction:column;
-  box-shadow:0 8px 32px rgba(0,0,0,0.5);
-  overflow:hidden;
-}
+#panel-buscados{position:fixed;bottom:4.5rem;left:1rem;width:260px;max-height:55vh;background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:199;display:none;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,0.5);overflow:hidden;}
 #panel-buscados.open{display:flex;}
 
-.pb-header{
-  padding:0.7rem 0.8rem 0.5rem;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:0.4rem;
-}
-.pb-header h3{font-family:'Press Start 2P',monospace;font-size:0.42rem;color:#ff6b35;letter-spacing:1px;flex:1;}
-.pb-header span{font-size:0.6rem;color:var(--muted);font-weight:700;}
-
-.pb-list{flex:1;overflow-y:auto;padding:0.4rem 0.5rem;display:flex;flex-direction:column;gap:0.25rem;scrollbar-width:thin;}
-
-.pb-item{
-  display:flex;align-items:center;gap:0.4rem;
-  padding:0.3rem 0.4rem;
-  background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);border-radius:8px;
-}
-.pb-name{flex:1;font-size:0.68rem;font-weight:800;color:var(--text);}
-.pb-price{font-size:0.62rem;font-weight:700;color:#f5c842;}
-.pb-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0 0.15rem;line-height:1;transition:color 0.12s;}
+.pb-header{padding:0.65rem 0.75rem 0.45rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.4rem;}
+.pb-header h3{font-family:'Press Start 2P',monospace;font-size:0.38rem;color:#ff6b35;letter-spacing:1px;flex:1;}
+.pb-header span{font-size:0.58rem;color:var(--muted);font-weight:700;}
+.pb-list{flex:1;overflow-y:auto;padding:0.35rem 0.45rem;display:flex;flex-direction:column;gap:0.22rem;scrollbar-width:thin;}
+.pb-item{display:flex;align-items:center;gap:0.35rem;padding:0.28rem 0.38rem;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:7px;}
+.pb-name{flex:1;font-size:0.68rem;font-weight:800;}
+.pb-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.72rem;padding:0;line-height:1;transition:color 0.12s;}
 .pb-del:hover{color:#ef4444;}
-
-.pb-form{padding:0.5rem 0.5rem 0.6rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:0.3rem;}
-.pb-form input{
-  width:100%;padding:0.32rem 0.5rem;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--border);border-radius:7px;
-  color:var(--text);font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:700;
-  outline:none;
-}
+.pb-form{padding:0.4rem 0.45rem 0.5rem;border-top:1px solid var(--border);display:flex;gap:0.3rem;}
+.pb-form input{flex:1;padding:0.3rem 0.4rem;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.68rem;font-weight:700;outline:none;}
 .pb-form input:focus{border-color:#ff6b35;}
 .pb-form input::placeholder{color:var(--muted);}
-.pb-add{
-  padding:0.3rem;border-radius:7px;border:none;
-  background:#ff6b35;color:#fff;
-  font-family:'Nunito',sans-serif;font-weight:900;font-size:0.65rem;
-  cursor:pointer;transition:opacity 0.15s;
-}
-.pb-add:hover{opacity:0.85;}
+.pb-add{padding:0.3rem 0.5rem;border-radius:6px;border:none;background:#ff6b35;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.62rem;cursor:pointer;white-space:nowrap;}
 .pb-empty{color:var(--muted);font-size:0.65rem;font-weight:700;text-align:center;padding:0.8rem 0;}
 
-/* ══════════════════════════════════
-   PANEL NUEVA BÚSQUEDA 📋
-   ══════════════════════════════════ */
-#fab-nueva{
-  position:fixed;bottom:4rem;right:1rem;
-  width:44px;height:44px;border-radius:50%;
-  background:#7986cb;border:none;
-  color:#fff;font-size:1.1rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  z-index:200;box-shadow:0 4px 16px rgba(121,134,203,0.5);
-  transition:all 0.2s;
-}
+/* FAB NUEVA BÚSQUEDA */
+#fab-nueva{position:fixed;bottom:4rem;right:1rem;width:44px;height:44px;border-radius:50%;background:#7986cb;border:none;color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(121,134,203,0.5);transition:all 0.2s;}
 #fab-nueva:hover{transform:scale(1.1);}
 
-#panel-nueva{
-  position:fixed;bottom:9rem;right:1rem;
-  width:300px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;z-index:199;
-  display:none;flex-direction:column;
-  box-shadow:0 8px 32px rgba(0,0,0,0.5);
-  overflow:hidden;
-}
+#panel-nueva{position:fixed;bottom:9rem;right:1rem;width:300px;background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:199;display:none;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,0.5);overflow:hidden;}
 #panel-nueva.open{display:flex;}
 
-.pn-header{padding:0.7rem 0.8rem 0.5rem;border-bottom:1px solid var(--border);}
-.pn-header h3{font-family:'Press Start 2P',monospace;font-size:0.42rem;color:#7986cb;letter-spacing:1px;margin-bottom:0.25rem;}
-.pn-header p{font-size:0.62rem;color:var(--muted);font-weight:700;}
-
-.pn-body{padding:0.5rem;}
-.pn-body textarea{
-  width:100%;height:130px;
-  padding:0.4rem 0.5rem;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--border);border-radius:8px;
-  color:var(--text);font-family:'Nunito',sans-serif;
-  font-size:0.68rem;font-weight:700;
-  resize:none;outline:none;
-  line-height:1.5;
-}
+.pn-header{padding:0.65rem 0.75rem 0.45rem;border-bottom:1px solid var(--border);}
+.pn-header h3{font-family:'Press Start 2P',monospace;font-size:0.38rem;color:#7986cb;letter-spacing:1px;margin-bottom:0.2rem;}
+.pn-header p{font-size:0.6rem;color:var(--muted);font-weight:700;}
+.pn-body{padding:0.45rem;}
+.pn-body textarea{width:100%;height:120px;padding:0.38rem 0.45rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.68rem;font-weight:700;resize:none;outline:none;line-height:1.5;}
 .pn-body textarea:focus{border-color:#7986cb;}
 .pn-body textarea::placeholder{color:var(--muted);}
-
-.pn-footer{padding:0 0.5rem 0.5rem;display:flex;gap:0.4rem;}
-.pn-cancel{flex:1;padding:0.32rem;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:900;font-size:0.62rem;cursor:pointer;}
-.pn-cancel:hover{border-color:var(--text);color:var(--text);}
-
-/* Botón cargar — doble confirmación */
-.pn-load{
-  flex:2;padding:0.32rem;border-radius:7px;border:none;
-  background:#7986cb;color:#fff;
-  font-family:'Nunito',sans-serif;font-weight:900;font-size:0.62rem;
-  cursor:pointer;transition:all 0.15s;
-}
+.pn-footer{padding:0 0.45rem 0.45rem;display:flex;gap:0.35rem;}
+.pn-cancel{flex:1;padding:0.3rem;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:900;font-size:0.6rem;cursor:pointer;}
+.pn-cancel:hover{color:var(--text);border-color:var(--text);}
+.pn-load{flex:2;padding:0.3rem;border-radius:7px;border:none;background:#7986cb;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.6rem;cursor:pointer;transition:all 0.15s;}
 .pn-load.confirmar{background:#ef4444;animation:pulse 0.4s ease;}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
 
@@ -243,12 +245,12 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
   .s-chk{display:none;}
   .s-nm{font-size:0.6rem;}
   #az-bar{display:none!important;}
-  #back-top{right:0.7rem;bottom:0.9rem;width:36px;height:36px;font-size:1rem;}
+  #back-top{right:0.6rem;bottom:0.8rem;width:36px;height:36px;font-size:1rem;}
   .alpha-grid{grid-template-columns:repeat(2,1fr);}
   .poke-grid{grid-template-columns:repeat(auto-fill,minmax(85px,1fr));}
   .main{padding:0.8rem 0.5rem 5rem;}
   #panel-buscados{width:calc(100vw - 2rem);}
-  #panel-nueva{width:calc(100vw - 2rem);}
+  #panel-nueva{width:calc(100vw - 2rem);right:1rem;}
 }
 </style>
 </head>
@@ -256,7 +258,7 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
 
 <header>
   <h1>⚡ Buscador de Cartas TCG</h1>
-  <p>✓ encontrado &nbsp;·&nbsp; imagen → TCG.io &nbsp;·&nbsp; 📱 mantén imagen = copiar nombre</p>
+  <p>toca una carta para ver opciones &nbsp;·&nbsp; 📱 mantén imagen = copiar nombre</p>
 </header>
 
 <div class="filters" id="filters"></div>
@@ -270,10 +272,10 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
   <div class="main" id="main"></div>
 </div>
 
-<!-- Botón volver arriba -->
+<!-- Volver arriba -->
 <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-<!-- Índice A-Z -->
+<!-- A-Z -->
 <div id="az-bar"></div>
 
 <!-- FAB Más buscados -->
@@ -285,9 +287,8 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
   </div>
   <div class="pb-list" id="pb-list"></div>
   <div class="pb-form">
-    <input id="pb-input-name" type="text" placeholder="Nombre del Pokémon" autocomplete="off">
-    <input id="pb-input-price" type="text" placeholder="Precio (opcional)" autocomplete="off">
-    <button class="pb-add" onclick="agregarBuscado()">+ Agregar</button>
+    <input id="pb-input" type="text" placeholder="Nombre del Pokémon" autocomplete="off">
+    <button class="pb-add" onclick="agregarBuscado()">+</button>
   </div>
 </div>
 
@@ -296,7 +297,7 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
 <div id="panel-nueva">
   <div class="pn-header">
     <h3>📋 NUEVA BÚSQUEDA</h3>
-    <p>Pegá el listado del cliente (un nombre por línea)</p>
+    <p>Un nombre por línea — se reemplaza la lista actual</p>
   </div>
   <div class="pn-body">
     <textarea id="pn-textarea" placeholder="Alcremie&#10;Lugia&#10;Dragapult&#10;..."></textarea>
@@ -307,42 +308,51 @@ header p{color:var(--muted);font-size:0.65rem;font-weight:700;}
   </div>
 </div>
 
+<!-- Popup Pokémon -->
+<div id="poke-popup" onclick="cerrarPopup(event)">
+  <div class="popup-card">
+    <button class="popup-close" onclick="cerrarPopup()">✕</button>
+    <img class="popup-img" id="popup-img" src="" alt="">
+    <div class="popup-img-fallback" id="popup-fallback" style="display:none">🔍</div>
+    <div class="popup-name" id="popup-name"></div>
+    <div class="popup-tags" id="popup-tags"></div>
+    <div class="popup-actions">
+      <button class="btn-agregar" id="popup-btn-agregar" onclick="agregarDesdePopup()">🔥 Agregar a Más Buscados</button>
+      <button class="btn-encontrado" id="popup-btn-encontrado" onclick="toggleFoundDesdePopup()">✓ Marcar como encontrado</button>
+      <button class="btn-copiar" id="popup-btn-copiar" onclick="copiarDesdePopup()">📋 Copiar nombre</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════════
 // STORAGE
 // ══════════════════════════════════════
-const SK_FOUND   = 'tcg_found_v1';
-const SK_LISTA   = 'tcg_lista_v1';
-const SK_BUSCADOS= 'tcg_buscados_v1';
+const SK_FOUND   ='tcg_found_v1';
+const SK_LISTA   ='tcg_lista_v1';
+const SK_BUSCADOS='tcg_buscados_v1';
 
 const PRELOADED=["Alcremie","Archen","Audino","Blastoise","Cyclizar","Dracozolt","Drifloon","Ferroseed","Fletchinder","Grafaiai","Grimmsnarl","Inteleon","Lugia","Polteageist","Primarina","Sobble","Spectrier","Whiscash"];
 
-// Lista actual de Pokémon (puede ser reemplazada)
-let listaActual = [];
-try{
-  const s=localStorage.getItem(SK_LISTA);
-  listaActual = s ? JSON.parse(s) : buildDefaultLista();
-}catch(e){ listaActual = buildDefaultLista(); }
+let listaActual=[];
+try{const s=localStorage.getItem(SK_LISTA);listaActual=s?JSON.parse(s):buildDefaultLista();}catch(e){listaActual=buildDefaultLista();}
 
-// Encontrados
 let found=new Set();
 try{const s=localStorage.getItem(SK_FOUND);if(s)found=new Set(JSON.parse(s));else{found=new Set(PRELOADED);saveFound();}}catch(e){found=new Set(PRELOADED);}
 
-// Más buscados
 let buscados=[];
 try{const s=localStorage.getItem(SK_BUSCADOS);if(s)buscados=JSON.parse(s);}catch(e){}
 
 function saveFound(){try{localStorage.setItem(SK_FOUND,JSON.stringify([...found]));}catch(e){}}
 function saveLista(){try{localStorage.setItem(SK_LISTA,JSON.stringify(listaActual));}catch(e){}}
 function saveBuscados(){try{localStorage.setItem(SK_BUSCADOS,JSON.stringify(buscados));}catch(e){}}
-
 function toggleFound(name){if(found.has(name))found.delete(name);else found.add(name);saveFound();render();}
 
 // ══════════════════════════════════════
-// LISTA DEFAULT (los 65 Pokémon originales)
+// LISTA DEFAULT
 // ══════════════════════════════════════
 function buildDefaultLista(){
-  return [
+  return[
     {name:"Alcremie",    pokeId:869, energias:["hada"],                     tags:["Hada"]},
     {name:"Arceus",      pokeId:493, energias:["incoloro"],                 tags:["Normal"]},
     {name:"Archen",      pokeId:566, energias:["lucha","incoloro"],         tags:["Roca","Volador"]},
@@ -412,158 +422,174 @@ function buildDefaultLista(){
 }
 
 // ══════════════════════════════════════
-// NUEVA BÚSQUEDA — parsear listado texto
+// PARSEAR NUEVA LISTA
 // ══════════════════════════════════════
-// Mapa nombre → datos Pokémon (para buscar por nombre)
-const POKEDATA = buildDefaultLista().reduce((m,p)=>{m[p.name.toLowerCase()]=p;return m;},{});
+const POKEDATA=buildDefaultLista().reduce((m,p)=>{m[p.name.toLowerCase()]=p;return m;},{});
 
-// Detecta energías según nombre (para Pokémon no conocidos usa incoloro)
 function parsearListado(texto){
-  const lineas = texto.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
-  return lineas.map(nombre=>{
-    const key = nombre.toLowerCase();
-    // Buscar coincidencia exacta o parcial
-    let found = POKEDATA[key];
-    if(!found){
-      // Buscar parcial
-      const match = Object.keys(POKEDATA).find(k=>k.includes(key)||key.includes(k));
-      if(match) found = POKEDATA[match];
-    }
-    if(found) return {...found, name: nombre}; // usa el nombre como fue escrito
-    // Pokémon no conocido — solo incoloro, sin sprite conocido
-    return {
-      name: nombre,
-      pokeId: null,
-      energias: ["incoloro"],
-      tags: ["?"]
-    };
+  return texto.split('\n').map(l=>l.trim()).filter(l=>l.length>0).map(nombre=>{
+    const key=nombre.toLowerCase();
+    let data=POKEDATA[key];
+    if(!data){const match=Object.keys(POKEDATA).find(k=>k.includes(key)||key.includes(k));if(match)data=POKEDATA[match];}
+    if(data)return{...data,name:nombre};
+    return{name:nombre,pokeId:null,energias:["incoloro"],tags:["?"]};
   });
 }
 
-let confirmandoCarga = false;
-let confirmTimer = null;
-
+let confirmandoCarga=false;let confirmTimer=null;
 function cargarNuevaBusqueda(){
-  const btn = document.getElementById('pn-load-btn');
-  const texto = document.getElementById('pn-textarea').value.trim();
-  if(!texto){ alert('Pegá al menos un nombre'); return; }
-
+  const btn=document.getElementById('pn-load-btn');
+  const texto=document.getElementById('pn-textarea').value.trim();
+  if(!texto){alert('Pegá al menos un nombre');return;}
   if(!confirmandoCarga){
-    // Primera vez — pedir confirmación
-    confirmandoCarga = true;
-    btn.textContent = '⚠️ ¿Confirmar? (toca de nuevo)';
+    confirmandoCarga=true;
+    btn.textContent='⚠️ ¿Confirmar? (toca de nuevo)';
     btn.classList.add('confirmar');
-    confirmTimer = setTimeout(()=>{
-      confirmandoCarga=false;
-      btn.textContent='Cargar listado';
-      btn.classList.remove('confirmar');
-    }, 3000);
+    confirmTimer=setTimeout(()=>{confirmandoCarga=false;btn.textContent='Cargar listado';btn.classList.remove('confirmar');},3000);
     return;
   }
-
-  // Segunda vez — cargar
-  clearTimeout(confirmTimer);
-  confirmandoCarga=false;
-  btn.textContent='Cargar listado';
-  btn.classList.remove('confirmar');
-
-  // Resetear encontrados para la nueva lista
-  found = new Set();
-  saveFound();
-
-  listaActual = parsearListado(texto);
-  saveLista();
-
+  clearTimeout(confirmTimer);confirmandoCarga=false;
+  btn.textContent='Cargar listado';btn.classList.remove('confirmar');
+  found=new Set();saveFound();
+  listaActual=parsearListado(texto);saveLista();
   cerrarPanels();
   document.getElementById('pn-textarea').value='';
-  current='todos';
-  render();
+  current='todos';render();
 }
 
 // ══════════════════════════════════════
 // MÁS BUSCADOS
 // ══════════════════════════════════════
-function agregarBuscado(){
-  const nombre = document.getElementById('pb-input-name').value.trim();
-  const precio = document.getElementById('pb-input-price').value.trim();
-  if(!nombre) return;
-  buscados.push({nombre, precio});
-  saveBuscados();
-  document.getElementById('pb-input-name').value='';
-  document.getElementById('pb-input-price').value='';
+function agregarBuscado(nombre){
+  const n=nombre||(document.getElementById('pb-input').value.trim());
+  if(!n)return;
+  if(!buscados.includes(n)){buscados.push(n);saveBuscados();}
+  document.getElementById('pb-input').value='';
   renderBuscados();
 }
-
-function eliminarBuscado(i){
-  buscados.splice(i,1);
-  saveBuscados();
-  renderBuscados();
-}
-
+function eliminarBuscado(i){buscados.splice(i,1);saveBuscados();renderBuscados();}
 function renderBuscados(){
-  const list = document.getElementById('pb-list');
-  const count = document.getElementById('pb-count');
-  count.textContent = buscados.length ? `${buscados.length} items` : '';
-  if(!buscados.length){
-    list.innerHTML='<div class="pb-empty">Sin registros aún</div>';
-    return;
-  }
-  list.innerHTML = buscados.map((b,i)=>`
-    <div class="pb-item">
-      <span class="pb-name">${b.nombre}</span>
-      ${b.precio?`<span class="pb-price">${b.precio}</span>`:''}
-      <button class="pb-del" onclick="eliminarBuscado(${i})">✕</button>
-    </div>`).join('');
+  const list=document.getElementById('pb-list');
+  const count=document.getElementById('pb-count');
+  count.textContent=buscados.length?`${buscados.length} items`:'';
+  list.innerHTML=buscados.length
+    ?buscados.map((b,i)=>`<div class="pb-item"><span class="pb-name">${b}</span><button class="pb-del" onclick="eliminarBuscado(${i})">✕</button></div>`).join('')
+    :'<div class="pb-empty">Sin registros aún</div>';
 }
-
-// Enter en inputs del panel buscados
-document.getElementById('pb-input-price').addEventListener('keydown',e=>{ if(e.key==='Enter') agregarBuscado(); });
-document.getElementById('pb-input-name').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('pb-input-price').focus(); });
+document.getElementById('pb-input').addEventListener('keydown',e=>{if(e.key==='Enter')agregarBuscado();});
 
 // ══════════════════════════════════════
-// PANELES — abrir/cerrar
+// PANELES
 // ══════════════════════════════════════
 function togglePanel(which){
-  const pb = document.getElementById('panel-buscados');
-  const pn = document.getElementById('panel-nueva');
-  if(which==='buscados'){
-    pb.classList.toggle('open');
-    pn.classList.remove('open');
-    if(pb.classList.contains('open')) renderBuscados();
-  } else {
-    pn.classList.toggle('open');
-    pb.classList.remove('open');
-    confirmandoCarga=false;
-    document.getElementById('pn-load-btn').textContent='Cargar listado';
-    document.getElementById('pn-load-btn').classList.remove('confirmar');
-  }
+  const pb=document.getElementById('panel-buscados');
+  const pn=document.getElementById('panel-nueva');
+  if(which==='buscados'){pb.classList.toggle('open');pn.classList.remove('open');if(pb.classList.contains('open'))renderBuscados();}
+  else{pn.classList.toggle('open');pb.classList.remove('open');confirmandoCarga=false;document.getElementById('pn-load-btn').textContent='Cargar listado';document.getElementById('pn-load-btn').classList.remove('confirmar');}
 }
 function cerrarPanels(){
   document.getElementById('panel-buscados').classList.remove('open');
   document.getElementById('panel-nueva').classList.remove('open');
 }
-// Clic fuera cierra paneles
 document.addEventListener('click',e=>{
-  const pb=document.getElementById('panel-buscados');
-  const pn=document.getElementById('panel-nueva');
-  const fb=document.getElementById('fab-buscados');
-  const fn=document.getElementById('fab-nueva');
-  if(!pb.contains(e.target)&&e.target!==fb) pb.classList.remove('open');
-  if(!pn.contains(e.target)&&e.target!==fn) pn.classList.remove('open');
+  const pb=document.getElementById('panel-buscados');const pn=document.getElementById('panel-nueva');
+  const fb=document.getElementById('fab-buscados');const fn=document.getElementById('fab-nueva');
+  if(!pb.contains(e.target)&&e.target!==fb)pb.classList.remove('open');
+  if(!pn.contains(e.target)&&e.target!==fn)pn.classList.remove('open');
 });
 
 // ══════════════════════════════════════
-// TOQUE LARGO — copiar nombre
+// POPUP POKÉMON
 // ══════════════════════════════════════
-let holdTimer=null;
+let popupPoke=null;
 
-function setupHold(wrap, name){
+function abrirPopup(p){
+  popupPoke=p;
+  const popup=document.getElementById('poke-popup');
+  const img=document.getElementById('popup-img');
+  const fallback=document.getElementById('popup-fallback');
+  const name=document.getElementById('popup-name');
+  const tags=document.getElementById('popup-tags');
+  const btnAgregar=document.getElementById('popup-btn-agregar');
+  const btnEncontrado=document.getElementById('popup-btn-encontrado');
+
+  // Imagen
+  if(p.pokeId){
+    img.src=`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/${p.pokeId}.png`;
+    img.onerror=function(){
+      this.src=`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${p.pokeId}.png`;
+      this.onerror=function(){this.style.display='none';fallback.style.display='flex';};
+    };
+    img.style.display='block';fallback.style.display='none';
+  } else {
+    img.style.display='none';fallback.style.display='flex';
+  }
+
+  name.textContent=p.name;
+  tags.innerHTML=p.tags.map(t=>`<span class="popup-tag" style="color:${tagColor(t)};border-color:${tagColor(t)}55">${t}</span>`).join('');
+
+  // Estado más buscados
+  const yaEnBuscados=buscados.includes(p.name);
+  btnAgregar.textContent=yaEnBuscados?'✓ Ya está en Más Buscados':'🔥 Agregar a Más Buscados';
+  btnAgregar.className='btn-agregar'+(yaEnBuscados?' ya':'');
+
+  // Estado encontrado
+  actualizarBtnEncontrado();
+
+  popup.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function actualizarBtnEncontrado(){
+  const btn=document.getElementById('popup-btn-encontrado');
+  const fc=popupPoke&&found.has(popupPoke.name);
+  btn.textContent=fc?'✓ Encontrado — desmarcar':'✓ Marcar como encontrado';
+  btn.className='btn-encontrado'+(fc?' fc':'');
+}
+
+function cerrarPopup(e){
+  if(e&&e.target!==document.getElementById('poke-popup'))return;
+  document.getElementById('poke-popup').classList.remove('open');
+  document.body.style.overflow='';
+  popupPoke=null;
+}
+
+function agregarDesdePopup(){
+  if(!popupPoke)return;
+  agregarBuscado(popupPoke.name);
+  const btn=document.getElementById('popup-btn-agregar');
+  btn.textContent='✓ Agregado!';btn.className='btn-agregar ya';
+}
+
+function toggleFoundDesdePopup(){
+  if(!popupPoke)return;
+  toggleFound(popupPoke.name);
+  actualizarBtnEncontrado();
+}
+
+function copiarDesdePopup(){
+  if(!popupPoke)return;
+  const btn=document.getElementById('popup-btn-copiar');
+  const doToast=()=>{btn.textContent='✓ Copiado!';btn.className='btn-copiar copiado';setTimeout(()=>{btn.textContent='📋 Copiar nombre';btn.className='btn-copiar';},2000);};
+  const fallback=()=>{const el=document.createElement('input');el.value=popupPoke.name;el.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px;';document.body.appendChild(el);el.focus();el.select();el.setSelectionRange(0,9999);try{document.execCommand('copy');doToast();}catch(e){}document.body.removeChild(el);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(popupPoke.name).then(doToast).catch(fallback);}
+  else{fallback();}
+}
+
+// ══════════════════════════════════════
+// TOQUE LARGO 400ms
+// ══════════════════════════════════════
+let holdTimer=null;let holdFired=false;
+
+function setupHold(wrap,name){
   wrap.addEventListener('touchstart',e=>{
+    holdFired=false;
     wrap.classList.add('holding');
     holdTimer=setTimeout(()=>{
+      holdFired=true;
       wrap.classList.remove('holding');
-      copiarTexto(wrap, name);
-    }, 700);
+      copiarTexto(wrap,name);
+    },400);
   },{passive:true});
   const cancel=()=>{wrap.classList.remove('holding');clearTimeout(holdTimer);};
   wrap.addEventListener('touchend',cancel);
@@ -571,79 +597,58 @@ function setupHold(wrap, name){
   wrap.addEventListener('touchcancel',cancel);
 }
 
-function copiarTexto(wrap, name){
-  const doToast=()=>{
-    wrap.classList.add('copiando');
-    setTimeout(()=>wrap.classList.remove('copiando'),1500);
-  };
-  const fallback=()=>{
-    const el=document.createElement('input');
-    el.value=name;el.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px;';
-    document.body.appendChild(el);el.focus();el.select();el.setSelectionRange(0,9999);
-    try{document.execCommand('copy');doToast();}catch(e){}
-    document.body.removeChild(el);
-  };
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(name).then(doToast).catch(fallback);
-  } else { fallback(); }
+function copiarTexto(wrap,name){
+  const doToast=()=>{wrap.classList.add('copiando');setTimeout(()=>wrap.classList.remove('copiando'),1500);};
+  const fallback=()=>{const el=document.createElement('input');el.value=name;el.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px;';document.body.appendChild(el);el.focus();el.select();el.setSelectionRange(0,9999);try{document.execCommand('copy');doToast();}catch(e){}document.body.removeChild(el);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(name).then(doToast).catch(fallback);}
+  else{fallback();}
 }
 
 // ══════════════════════════════════════
 // ENERGÍAS
 // ══════════════════════════════════════
 const ENERGIAS=[
-  {id:"todos",    label:"TODOS",    icon:"★",  color:"#f5c842", nota:""},
-  {id:"fuego",    label:"Fuego",    icon:"🔥", color:"#ff6b35", nota:"Tipo: Fuego"},
-  {id:"agua",     label:"Agua",     icon:"💧", color:"#29b6f6", nota:"Tipos: Agua + Hielo"},
-  {id:"rayo",     label:"Rayo",     icon:"⚡", color:"#ffd740", nota:"Tipo: Eléctrico"},
-  {id:"planta",   label:"Planta",   icon:"🌿", color:"#66bb6a", nota:"Tipos: Planta + Bicho"},
-  {id:"lucha",    label:"Lucha",    icon:"👊", color:"#e57c3a", nota:"Tipos: Lucha + Roca + Tierra"},
-  {id:"psiquico", label:"Psíquico", icon:"🔮", color:"#ce93d8", nota:"Tipos: Psíquico + Fantasma + Veneno"},
-  {id:"oscuro",   label:"Oscuro",   icon:"🌑", color:"#78909c", nota:"Tipo: Oscuro"},
-  {id:"metal",    label:"Metal",    icon:"⚙️", color:"#b0bec5", nota:"Tipo: Acero"},
-  {id:"dragon",   label:"Dragón",   icon:"🐉", color:"#7986cb", nota:"Tipo: Dragón"},
-  {id:"incoloro", label:"Incoloro", icon:"⬜", color:"#bdbdbd", nota:"Tipos: Normal + Volador"},
-  {id:"hada",     label:"Hada",     icon:"🧚", color:"#f48fb1", nota:"Tipo: Hada"},
+  {id:"todos",    label:"TODOS",    icon:"★",  color:"#f5c842",nota:""},
+  {id:"fuego",    label:"Fuego",    icon:"🔥", color:"#ff6b35",nota:"Tipo: Fuego"},
+  {id:"agua",     label:"Agua",     icon:"💧", color:"#29b6f6",nota:"Tipos: Agua + Hielo"},
+  {id:"rayo",     label:"Rayo",     icon:"⚡", color:"#ffd740",nota:"Tipo: Eléctrico"},
+  {id:"planta",   label:"Planta",   icon:"🌿", color:"#66bb6a",nota:"Tipos: Planta + Bicho"},
+  {id:"lucha",    label:"Lucha",    icon:"👊", color:"#e57c3a",nota:"Tipos: Lucha + Roca + Tierra"},
+  {id:"psiquico", label:"Psíquico", icon:"🔮", color:"#ce93d8",nota:"Tipos: Psíquico + Fantasma + Veneno"},
+  {id:"oscuro",   label:"Oscuro",   icon:"🌑", color:"#78909c",nota:"Tipo: Oscuro"},
+  {id:"metal",    label:"Metal",    icon:"⚙️", color:"#b0bec5",nota:"Tipo: Acero"},
+  {id:"dragon",   label:"Dragón",   icon:"🐉", color:"#7986cb",nota:"Tipo: Dragón"},
+  {id:"incoloro", label:"Incoloro", icon:"⬜", color:"#bdbdbd",nota:"Tipos: Normal + Volador"},
+  {id:"hada",     label:"Hada",     icon:"🧚", color:"#f48fb1",nota:"Tipo: Hada"},
 ];
 
-// ══════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════
-function sprite(id){return id?`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/${id}.png`:null;}
-function spriteFb(id){return id?`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`:null;}
-function tcgUrl(name){return`https://www.pokemontcg.io/cards?q=name%3A%22${encodeURIComponent(name)}%22`;}
 const TYPE_E={"Fuego":"fuego","Agua":"agua","Hielo":"agua","Eléctrico":"rayo","Planta":"planta","Bicho":"planta","Lucha":"lucha","Roca":"lucha","Tierra":"lucha","Psíquico":"psiquico","Fantasma":"psiquico","Veneno":"psiquico","Oscuro":"oscuro","Acero":"metal","Dragón":"dragon","Normal":"incoloro","Volador":"incoloro","Hada":"hada","?":"incoloro"};
 function tagColor(tag){const eid=TYPE_E[tag]||"incoloro";return(ENERGIAS.find(e=>e.id===eid)||{color:"#888"}).color;}
 function eColor(id){return(ENERGIAS.find(e=>e.id===id)||{color:"#888"}).color;}
 function sid(name){return'card-'+name.replace(/[^a-z0-9]/gi,'_');}
+function sprite(id){return id?`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/${id}.png`:null;}
+function spriteFb(id){return id?`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`:null;}
 
 // ══════════════════════════════════════
 // RENDER
 // ══════════════════════════════════════
 let current="todos";
+function getAlpha(){return[...listaActual].sort((a,b)=>a.name.localeCompare(b.name));}
 
-function getAlpha(){ return [...listaActual].sort((a,b)=>a.name.localeCompare(b.name)); }
-
-function cardHTML(p, clr){
+function cardHTML(p,clr){
   const fc=found.has(p.name);
   const tags=p.tags.map(t=>`<span class="poke-tag" style="color:${tagColor(t)};border-color:${tagColor(t)}55">${t}</span>`).join('');
-  const sn=p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;');
-  const imgSrc = sprite(p.pokeId);
-  const imgFb  = spriteFb(p.pokeId);
-  const imgTag = imgSrc
-    ? `<img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.src='${imgFb}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}">`
-    : '';
-  return`<div class="poke-card${fc?' fc':''}" style="--clr:${clr}" id="${sid(p.name)}">
-    <button class="chk-btn" onclick="event.preventDefault();event.stopPropagation();toggleFound('${sn}')">✓</button>
-    <a class="poke-link" href="${tcgUrl(p.name)}" target="_blank" rel="noopener">
-      <div class="img-wrap" data-name="${p.name.replace(/"/g,'&quot;')}">
-        ${imgTag}
-        <div class="fallback">${imgSrc?'❓':'🔍'}</div>
-        <div class="copy-toast">✓ Copiado!</div>
-      </div>
-      <div class="poke-name">${p.name}</div>
-      <div class="poke-tags">${tags}</div>
-    </a>
+  const imgSrc=sprite(p.pokeId);const imgFb=spriteFb(p.pokeId);
+  const imgTag=imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.src='${imgFb}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}">`:'' ;
+  const sn=p.name.replace(/'/g,"\\'");
+  return`<div class="poke-card${fc?' fc':''}" style="--clr:${clr}" id="${sid(p.name)}" onclick="abrirPopup(listaActual.find(x=>x.name==='${sn}'))">
+    <button class="chk-btn" onclick="event.stopPropagation();toggleFound('${sn}')">✓</button>
+    <div class="img-wrap" data-name="${p.name.replace(/"/g,'&quot;')}">
+      ${imgTag}<div class="fallback">${imgSrc?'❓':'🔍'}</div>
+      <div class="copy-toast">✓ Copiado!</div>
+    </div>
+    <div class="poke-name">${p.name}</div>
+    <div class="poke-tags">${tags}</div>
     <div class="found-bar">✓ Encontrado</div>
   </div>`;
 }
@@ -654,10 +659,7 @@ function sectionHTML(e){
   return`<div class="type-section" style="--clr:${e.color}">
     <div class="sec-header" style="--clr:${e.color};border-color:${e.color}">
       <div class="big-ico" style="background:${e.color}">${e.icon}</div>
-      <div>
-        <h2 style="color:${e.color}">ENERGÍA ${e.label.toUpperCase()}</h2>
-        ${e.nota?`<div class="sub">${e.nota}</div>`:''}
-      </div>
+      <div><h2 style="color:${e.color}">ENERGÍA ${e.label.toUpperCase()}</h2>${e.nota?`<div class="sub">${e.nota}</div>`:''}</div>
       <div class="cnt">${lista.length} pokémon</div>
     </div>
     <div class="poke-grid">${lista.map(p=>cardHTML(p,e.color)).join('')}</div>
@@ -665,9 +667,7 @@ function sectionHTML(e){
 }
 
 function attachHoldEvents(){
-  document.querySelectorAll('.img-wrap[data-name]').forEach(wrap=>{
-    setupHold(wrap, wrap.dataset.name);
-  });
+  document.querySelectorAll('.img-wrap[data-name]').forEach(wrap=>{setupHold(wrap,wrap.dataset.name);});
 }
 
 function renderMain(){
@@ -677,19 +677,9 @@ function renderMain(){
   if(current==='todos'){
     azBar.classList.add('visible');
     const totalF=alpha.filter(p=>found.has(p.name)).length;
-    const items=alpha.map(p=>{
-      const fc=found.has(p.name);
-      return`<div class="a-item${fc?' af':''}" onclick="jumpTo('${sid(p.name)}')">
-        <span class="a-chk">✓</span>
-        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
-      </div>`;
-    }).join('');
+    const items=alpha.map(p=>`<div class="a-item${found.has(p.name)?' af':''}" onclick="jumpTo('${sid(p.name)}')"><span class="a-chk">✓</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span></div>`).join('');
     const sections=ENERGIAS.filter(e=>e.id!=='todos').map(sectionHTML).join('');
-    el.innerHTML=`<div class="alpha-section">
-      <div class="alpha-title">★ Lista actual — ${totalF}/${alpha.length} encontrados</div>
-      <div class="alpha-grid">${items}</div>
-      <hr class="alpha-divider">
-    </div>${sections}`;
+    el.innerHTML=`<div class="alpha-section"><div class="alpha-title">★ Lista actual — ${totalF}/${alpha.length} encontrados</div><div class="alpha-grid">${items}</div><hr class="alpha-divider"></div>${sections}`;
     buildAZBar(alpha);
   } else {
     azBar.classList.remove('visible');
@@ -701,53 +691,29 @@ function renderMain(){
 
 function buildAZBar(alpha){
   const tiene=new Set(alpha.map(p=>p.name[0].toUpperCase()));
-  document.getElementById('az-bar').innerHTML='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>`
-    <button class="az-btn${tiene.has(l)?' has':''}"
-            ${tiene.has(l)?`onclick="jumpToLetter('${l}')"`:' disabled'}>
-      ${l}
-    </button>`).join('');
+  document.getElementById('az-bar').innerHTML='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>`<button class="az-btn${tiene.has(l)?' has':''}" ${tiene.has(l)?`onclick="jumpToLetter('${l}')"`:' disabled'}>${l}</button>`).join('');
 }
-
-function jumpToLetter(l){
-  const alpha=getAlpha();
-  const first=alpha.find(p=>p.name[0].toUpperCase()===l);
-  if(first)jumpTo(sid(first.name));
-}
-
-function jumpTo(id){
-  const el=document.getElementById(id);
-  if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='2px solid #f5c842';setTimeout(()=>el.style.outline='',1200);}
-}
+function jumpToLetter(l){const first=getAlpha().find(p=>p.name[0].toUpperCase()===l);if(first)jumpTo(sid(first.name));}
+function jumpTo(id){const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='2px solid #f5c842';setTimeout(()=>el.style.outline='',1200);}}
 
 function renderSidebar(){
   const alpha=getAlpha();
   const lista=current==='todos'?alpha:alpha.filter(p=>p.energias.includes(current));
   const totalF=lista.filter(p=>found.has(p.name)).length;
   const clr=current==='todos'?'#f5c842':eColor(current);
-  const eLabel=current==='todos'?'Lista actual':`Energía ${ENERGIAS.find(e=>e.id===current)?.label||''}`;
-  document.getElementById('sb-title').textContent=eLabel;
+  document.getElementById('sb-title').textContent=current==='todos'?'Lista actual':`Energía ${ENERGIAS.find(e=>e.id===current)?.label||''}`;
   document.getElementById('sb-stats').innerHTML=`<span style="color:${clr}">${totalF}</span><span style="color:var(--muted)"> / ${lista.length}</span>`;
-  document.getElementById('sb-list').innerHTML=lista.map(p=>`
-    <button class="s-item${found.has(p.name)?' sf':''}" onclick="jumpTo('${sid(p.name)}')">
-      <span class="s-chk">✓</span>
-      <span class="s-nm">${p.name}</span>
-    </button>`).join('');
+  document.getElementById('sb-list').innerHTML=lista.map(p=>`<button class="s-item${found.has(p.name)?' sf':''}" onclick="jumpTo('${sid(p.name)}')"><span class="s-chk">✓</span><span class="s-nm">${p.name}</span></button>`).join('');
 }
 
 function renderFilters(){
-  document.getElementById('filters').innerHTML=ENERGIAS.map(e=>`
-    <button class="filter-btn${current===e.id?' active':''}" style="--clr:${e.color}"
-            onclick="setFilter('${e.id}')">
-      <span class="eico">${e.icon}</span>${e.label}
-    </button>`).join('');
+  document.getElementById('filters').innerHTML=ENERGIAS.map(e=>`<button class="filter-btn${current===e.id?' active':''}" style="--clr:${e.color}" onclick="setFilter('${e.id}')"><span class="eico">${e.icon}</span>${e.label}</button>`).join('');
 }
 
 function setFilter(id){current=id;render();window.scrollTo({top:0,behavior:'smooth'});}
 function render(){renderFilters();renderSidebar();renderMain();}
 
-window.addEventListener('scroll',()=>{
-  document.getElementById('back-top').classList.toggle('visible',window.scrollY>300);
-});
+window.addEventListener('scroll',()=>{document.getElementById('back-top').classList.toggle('visible',window.scrollY>300);});
 
 render();
 </script>
